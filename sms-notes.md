@@ -51,7 +51,7 @@ Why This Works
    - Function validates the phone number → writes `{ phone, timestamp }` to Firestore.  
    - Function sends “Welcome” SMS via Twilio.
    - If validation fails → sends SMS: “We couldn’t process your request. Please check your number.”
-
+-The test did work as of 1:40pm 4/29/24!
 
 2. **Welcome SMS**  
    After storing, server invokes Twilio API → sends “Welcome” SMS.  
@@ -88,6 +88,11 @@ Why This Works
   • Pro: No UI code needed, instant testing  
   • Con: Not user-friendly for non-technical management
 
+
+## Community Outreach
+- **r/learnjavascript**  
+  - Joined & posted intro: https://www.reddit.com/r/learnjavascript/comments/…  
+  - Asked about webhook security & Firestore cost best practices  
 
 
 
