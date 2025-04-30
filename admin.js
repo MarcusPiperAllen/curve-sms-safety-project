@@ -60,7 +60,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   
   function refreshSubscribers() {
-    console.log('Refreshing subscribers…');
     loadSubscribers();
   }
   
@@ -86,15 +85,27 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   
   function sendAlert() {
-    const message = document.getElementById("alertMessage").value;
-    console.log(`Sending alert: ${message}`);
+    const message = document.getElementById("alertMessage").value.trim();
+
+    if (!message) {
+        console.warn("Alert message cannot be empty!");
+        return;
+    }
+
+    console.log(`✅ Alert sent successfully: ${message}`); // Success confirmation
     closeModal();
-  }
-  
-  function scheduleAlert() {
-    const message = document.getElementById("alertMessage").value;
-    const time    = document.getElementById("scheduleTime").value;
-    console.log(`Scheduling alert: ${message} at ${time}`);
+}
+
+function scheduleAlert() {
+    const message = document.getElementById("alertMessage").value.trim();
+    const time = document.getElementById("scheduleTime").value;
+
+    if (!message || !time) {
+        console.warn("Scheduling failed: Message and time must be set.");
+        return;
+    }
+
+    console.log(`📅 Scheduled alert: ${message} at ${time}`); // Confirmation log
     closeModal();
-  }
+}
   
