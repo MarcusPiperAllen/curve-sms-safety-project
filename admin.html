@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header>
+    <h1>Gables Alerts Admin</h1>
+    <input type="text" id="search" placeholder="Search..." />
+    <button id="logout">Logout</button>
+  </header>
+
+  <nav>
+    <button onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('subscribers')">Subscribers</button>
+    <button onclick="showSection('alerts')">Alerts</button>
+    <button onclick="showSection('settings')">Settings</button>
+  </nav>
+
+  <main id="content">
+    <!-- Dashboard shows by default (no hidden class) -->
+    <section id="dashboard">
+      <h2>Dashboard Overview</h2>
+      <p>Key metrics go here.</p>
+    </section>
+
+    <section id="subscribers" class="hidden">
+      <h2>Subscribers</h2>
+      <input type="text" id="filter" placeholder="Filter by phone or name" />
+      <button onclick="refreshSubscribers()">Refresh</button>
+      <button onclick="exportSubscribers()">Export CSV</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Opt-In Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="subscriberList">
+          <!-- Filled by JavaScript -->
+        </tbody>
+      </table>
+    </section>
+
+    <section id="alerts" class="hidden">
+      <h2>Alerts</h2>
+      <button onclick="showNewAlertModal()">New Alert</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Message Preview</th>
+            <th>Timestamp</th>
+            <th>Sent</th>
+            <th>Delivered</th>
+            <th>Failed</th>
+          </tr>
+        </thead>
+        <tbody id="alertList">
+          <!-- Filled by JavaScript -->
+        </tbody>
+      </table>
+    </section>
+
+    <section id="settings" class="hidden">
+      <h2>Settings</h2>
+      <label for="apiKey">API Key</label>
+      <input type="text" id="apiKey" readonly />
+      <button onclick="rotateApiKey()">Rotate</button>
+    </section>
+  </main>
+
+  <!-- Modal wrapper now has an inner <div> for styling -->
+  <div id="newAlertModal" class="modal hidden">
+    <div>
+      <textarea id="alertMessage" placeholder="Enter alert message..."></textarea>
+      <input type="datetime-local" id="scheduleTime" />
+      <button onclick="sendAlert()">Send Now</button>
+      <button onclick="scheduleAlert()">Schedule Later</button>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
