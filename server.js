@@ -1,5 +1,8 @@
 // 1. Load environment variables
 require('dotenv').config();
+const { sendWelcomeSMS, broadcastSMS } = require('./twilio-tools');
+
+
 
 // 2. Log environment variable statuses
 console.log('✅ .env loaded');
@@ -32,27 +35,8 @@ app.use(express.json());
 // 6. In-memory subscriber list
 const subscribers = new Set();
 
-// 7. Helper function to send SMS messages
-async function broadcastSMS(phones, message) {
-  const results = [];
+// 7. Helper function to send SMS messages removed 5-1-25
 
-  for (const phone of phones) {
-    try {
-      const sent = await twilioClient.messages.create({
-        to: phone,
-        from: process.env.TWILIO_PHONE_NUMBER,
-        body: message
-      });
-      console.log(`✅ Sent to ${phone}, SID: ${sent.sid}`);
-      results.push({ phone, status: 'sent', sid: sent.sid });
-    } catch (err) {
-      console.error(`❌ Failed to send to ${phone}:`, err.message);
-      results.push({ phone, status: 'failed', error: err.message });
-    }
-  }
-
-  return results;
-}
 
 // 8. SMS webhook (handles incoming texts)
 app.post('/sms', (req, res) => {
