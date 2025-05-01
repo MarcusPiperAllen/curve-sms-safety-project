@@ -29,7 +29,7 @@ Secure /broadcast with API key
 
 Sketch Admin UI data bindings (Firestore → table)
 
-## 📅 Thursday, May 1, 2025
+## 📅 May 1, 2025
 
 ### ✅ What I Did Today
 - Established 200 OK connection between Ngrok and local server
@@ -39,7 +39,10 @@ Sketch Admin UI data bindings (Firestore → table)
 - Checked LinkedIn (no strong leads yet)
 - Resumed FreeCodeCamp JavaScript lessons (conditions, loops)
 - Started LLC planning in separate doc
-- Reorganized dev folder structure and created `Archived_Dev_Projects`
+- Reorganized dev folder structure and created
+Logged job lead: GDIT Software Developer Associate
+Server.js + twilio-tools.js now clean and modular
+ `Archived_Dev_Projects`
 - Sent a live message from the admin panel and confirmed in logs
 
 ---
@@ -49,7 +52,7 @@ Sketch Admin UI data bindings (Firestore → table)
 - No strong job/internship leads today
 - Need to resume consistent typing + GitHub push routine
 - Parsons internship was declined
-
+- Need to clear the 502 error 
 ---
 - ✅ Final code pushed to GitHub (`curve-safety-project`)
 
