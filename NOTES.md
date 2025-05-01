@@ -17,3 +17,47 @@
 
 **Date 2025/04/30
 “I will build and secure my SMS system today.”
+
+Wins: (e.g.) “Normalized all line endings,” “Deployed admin.html prototype,” “Wired up filter & export.”
+
+Stumbles: (e.g.) “ngrok hiccup,” “Appointment delayed Twilio upgrade,” etc.
+**3 Must-Dos:**
+
+Verify phone number or upgrade Twilio plan
+
+Secure /broadcast with API key
+
+Sketch Admin UI data bindings (Firestore → table)
+
+## 📅 Thursday, May 1, 2025
+
+### ✅ What I Did Today
+- Established 200 OK connection between Ngrok and local server
+- Verified Twilio SMS delivery via live Admin UI
+- Archived `curve-safety-project` as Phase 1 complete
+- Posted a developer networking thread on Reddit (1 beginner response)
+- Checked LinkedIn (no strong leads yet)
+- Resumed FreeCodeCamp JavaScript lessons (conditions, loops)
+- Started LLC planning in separate doc
+- Reorganized dev folder structure and created `Archived_Dev_Projects`
+- Sent a live message from the admin panel and confirmed in logs
+
+---
+
+### 🚧 Challenges or Blockers
+- Haven’t heard from dev friend yet
+- No strong job/internship leads today
+- Need to resume consistent typing + GitHub push routine
+- Parsons internship was declined
+
+---
+
+### 🔭 What Comes Next
+- Full school day Friday (assignments pending)
+- Reach out to Reddit beginner for a short convo
+- Search for 1 internship + update resume if needed
+- Continue JavaScript drills and document new functions in `day1-notes.js`
+- Begin GitHub README or portfolio page for Curve-Safety
+- Begin prepping for possible LLC setup (not urgent, just planned)
+
+
