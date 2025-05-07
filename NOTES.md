@@ -63,5 +63,36 @@ Server.js + twilio-tools.js now clean and modular
 - Continue JavaScript drills and document new functions in `day1-notes.js`
 - Begin GitHub README or portfolio page for Curve-Safety
 - Begin prepping for possible LLC setup (not urgent, just planned)
+ ## May 1 – Final Log## 
 
+✅ Highlights:
+- Admin UI is fully functional in structure
+- Navigation buttons activate correct sections
+- Secure Ngrok + Express backend runs cleanly
+- API key removed from frontend
+- All code committed and pushed to GitHub
 
+🛠 Gaps:
+- Message input modal only accessible via Alerts, not Dashboard
+- No backend data store (subscribers & alerts not persisted)
+- Twilio webhook still pointed to old Ngrok URL (update required)
+- No dynamic data populates dashboard yet
+
+🎯 Ready for Phase 2:
+- Link Twilio to latest Ngrok
+- Store subscriber/alert data dynamically
+- Add message creation widget to Dashboard (or make Alerts default)
+**Date May 5, 2025**
+ “Must‑Do 3”
+Apply to 3 targeted jobs.
+
+Complete Java two exercises.
+
+Outline your LLC steps & SMS service pitch.
+**May 7, 2025**
+"3 Must Do"
+Apply to 3 internships or jobs
+complete at least 2 javascript task
+situate all code for sms app 
+Log day at end of day
+End of day log:
