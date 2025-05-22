@@ -95,4 +95,28 @@ Apply to 3 internships or jobs
 complete at least 2 javascript task
 situate all code for sms app 
 Log day at end of day
-End of day log:
+End‑of‑Day Log:
+
+✅ Applied to the Junior Systems Engineer Intern position at American Systems
+
+⬜ Didn’t get to JavaScript tasks today—will tackle those first thing tomorrow
+
+✅ Organized and committed all SMS app code, pushed updates to GitHub, and deployed the opt‑in page to Netlify
+
+📋 Plan for tomorrow:
+
+Finish 2 JavaScript exercises
+
+Test STOP/HELP flows end‑to‑end
+
+Begin frontend validation enhancements
+**Thursday, May 8, 2025**
+
+3 Must‑Do Today
+
+Apply to at least 2 more internships or jobs (follow up on yesterday’s applications and expand your reach).
+
+Complete 2 JavaScript practice tasks—focus on array and object methods to sharpen your coding fluency.
+
+Test your STOP/HELP SMS flows end‑to‑end and fix any edge‑case bugs in your /sms webhook.
+

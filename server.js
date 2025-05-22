@@ -5,7 +5,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const { MessagingResponse } = require("twilio").twiml;
-const { sendSMS, broadcastSMS } = require("./src/messaging/twilio");
+const { sendSMS, broadcastSMS } = require("./twilio-tools");
 
 // 2. Initialize App & Middleware
 const app = express();
