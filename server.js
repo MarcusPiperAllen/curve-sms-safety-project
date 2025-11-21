@@ -6,6 +6,11 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const { MessagingResponse } = require("twilio").twiml;
 const { sendSMS, broadcastSMS } = require("./twilio-tools");
+const {
+  addSubscriber,
+  getSubscribers,
+  removeSubscriber
+} = require("./db");
 
 // 2. Initialize App & Middleware
 const app = express();
@@ -26,20 +31,15 @@ if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
     throw new Error("🚨 Twilio credentials are missing in .env file!");
 }
 
-// 4. In-Memory Subscriber List (Replace with DB Later)
-const subscribers = new Set();
-
-// 5. Subscription Helpers
+// 4. Subscription Helpers
 async function markUserSubscribed(phone) {
-    subscribers.add(phone);
+    addSubscriber(phone);
     console.log(`✅ User subscribed: ${phone}`);
-    // TODO: persist to DB
 }
 
 async function markUserOptedOut(phone) {
-    subscribers.delete(phone);
+    removeSubscriber(phone);
     console.log(`✅ User opted out: ${phone}`);
-    // TODO: persist to DB
 }
 
 // 6. SMS Webhook (Handles Incoming Texts)
@@ -90,7 +90,7 @@ app.post("/broadcast", verifyAPIKey, async (req, res) => {
     const { message } = req.body;
     if (!message) return res.status(400).json({ error: 'Missing "message" field in JSON body' });
 
-    const phoneList = Array.from(subscribers);
+    const phoneList = getSubscribers().map(sub => sub.phone);
     if (!phoneList.length) return res.status(200).json({ success: false, message: "No subscribers available." });
 
     try {
@@ -110,11 +110,21 @@ app.post("/broadcast", verifyAPIKey, async (req, res) => {
 
 // 8. Subscribers & Alerts Endpoints for Frontend
 app.get("/subscribers", (req, res) => {
-    res.json({ subscribers: Array.from(subscribers).map(num => ({ phone: num, status: "Active" })) });
+    const subscribers = getSubscribers();
+    res.json({ subscribers });
 });
 
 app.get("/alerts", (req, res) => {
     res.json([{ message: "Test Alert", timestamp: "2025-05-01 15:30", sent: 5, delivered: 4, failed: 1 }]);
+});
+
+// DEV ONLY - remove in production
+app.post("/dev/subscribe", (req, res) => {
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ error: "Missing phone" });
+
+    addSubscriber(phone);
+    res.json({ success: true, phone });
 });
 
 // 9. Health Check Route
