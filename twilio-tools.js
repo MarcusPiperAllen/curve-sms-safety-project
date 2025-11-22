@@ -20,7 +20,7 @@ async function sendWelcomeSMS(phone) {
     const msg = await client.messages.create({
       to: phone,
       from: process.env.TWILIO_PHONE_NUMBER,
-      body: '✅ Welcome to Gables Alerts! You’re now subscribed.'
+      body: '✅ Welcome to CURVE Safety Alerts! You are now subscribed.'
     });
     console.log(`[${now()}] ✅ Welcome SMS sent: ${msg.sid}`);
     return msg;
@@ -38,14 +38,22 @@ async function sendWelcomeSMS(phone) {
  */
 async function broadcastSMS(phones, message) {
   const results = [];
+  const statusCallback = process.env.STATUS_CALLBACK_URL || null;
 
   for (let to of phones) {
     try {
-      const msg = await client.messages.create({
+      const msgOptions = {
         to,
         from: process.env.TWILIO_PHONE_NUMBER,
         body: message
-      });
+      };
+
+      // Add status callback if configured
+      if (statusCallback) {
+        msgOptions.statusCallback = statusCallback;
+      }
+
+      const msg = await client.messages.create(msgOptions);
       console.log(`[${now()}] ✅ Sent to ${to}, SID: ${msg.sid}`);
       results.push({ to, sid: msg.sid, status: 'sent' });
     } catch (err) {
@@ -54,11 +62,17 @@ async function broadcastSMS(phones, message) {
       // Retry logic with a 1-second delay
       await new Promise(r => setTimeout(r, 1000));
       try {
-        const retryMsg = await client.messages.create({
+        const msgOptions = {
           to,
           from: process.env.TWILIO_PHONE_NUMBER,
           body: message
-        });
+        };
+
+        if (statusCallback) {
+          msgOptions.statusCallback = statusCallback;
+        }
+
+        const retryMsg = await client.messages.create(msgOptions);
         console.log(`[${now()}] 🔁 Retry successful: ${to}, SID: ${retryMsg.sid}`);
         results.push({ to, sid: retryMsg.sid, status: 'sent (retry)' });
       } catch (retryErr) {
@@ -79,7 +93,7 @@ module.exports = {
 
 // 4) CLI Execution - Only runs when executed directly
 if (require.main === module) {
-  const message = process.argv[2] || '📢 Test broadcast from Gables Alerts!';
+  const message = process.argv[2] || '📢 Test broadcast from CURVE Safety Alerts!';
   const testNumbers = [
     process.env.TARGET_PHONE_NUMBER,
     process.env.TEST_PHONE_NUMBER_2 // Configurable second test number

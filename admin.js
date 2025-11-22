@@ -36,6 +36,8 @@ function showSection(sectionId) {
 
   console.log("Trying to show section:", sectionId);
 
+  // Refresh data when switching to these sections
+  if (sectionId === "subscribers") loadSubscribers();
   if (sectionId === "alerts") loadAlerts();
 
   // Log current state of all sections
@@ -69,54 +71,91 @@ function closeModal() {
 
 // As the admin, I want to know how many subscribers I have at any given time.
 // This function gets the subscriber data from the server and prints it inside the table.
-// If it can’t find any subscribers, it logs an error (right now just in the console).
+// If it can't find any subscribers, it logs an error (right now just in the console).
 // It loops through the list and creates rows so I can see phone and status.
 async function loadSubscribers() {
   try {
-      const response = await fetch("https://e65e-2600-4040-2150-ad00-e152-29ae-bd46-ff92.ngrok-free.app/subscribers", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" }
-      });
+      const response = await fetch("/subscribers");
 
       if (!response.ok) throw new Error(`HTTP ${response.status}: Failed to retrieve subscriber list.`);
-      const { subscribers } = await response.json();
+      const data = await response.json();
+      const subscribers = Array.isArray(data.subscribers) ? data.subscribers : [];
 
-      const tbody = document.getElementById("subscriberList");
-      tbody.innerHTML = "";
-      subscribers.forEach(sub => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${sub.phone}</td><td>${sub.status}</td>`;
-          tbody.appendChild(tr);
-      });
+      renderSubscribersTable(subscribers);
   } catch (err) {
       console.error("Failed to load subscribers:", err);
+      renderSubscribersTable([]);
   }
+}
+
+function renderSubscribersTable(subscribers) {
+  const tbody = document.getElementById("subscriberList");
+  tbody.innerHTML = "";
+
+  if (subscribers.length === 0) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="4" style="text-align: center;">No subscribers found</td>`;
+      tbody.appendChild(tr);
+      return;
+  }
+
+  subscribers.forEach(sub => {
+      const tr = document.createElement("tr");
+      const status = sub.status === "active" ? "Active" : "Inactive";
+      const optInDate = sub.created_at ? new Date(sub.created_at).toLocaleDateString() : "N/A";
+      tr.innerHTML = `
+          <td>—</td>
+          <td>${sub.phone}</td>
+          <td>${optInDate}</td>
+          <td>${status}</td>
+      `;
+      tbody.appendChild(tr);
+  });
 }
 
 // The admin needs to be able to pull data and see alerts from the system.
 // This function fetches alert history from the server and displays each alert in a table.
-// If there's a problem, it logs an error but doesn’t show anything to the user yet.
+// If there's a problem, it logs an error but doesn't show anything to the user yet.
 // Each alert shows message preview, time sent, and delivery status.
 async function loadAlerts() {
   try {
-      const response = await fetch("https://e65e-2600-4040-2150-ad00-e152-29ae-bd46-ff92.ngrok-free.app/alerts", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" }
-      });
+      const response = await fetch("/alerts");
 
       if (!response.ok) throw new Error(`HTTP ${response.status}: Failed to retrieve alerts.`);
-      const { alerts } = await response.json();
+      const data = await response.json();
+      const messages = Array.isArray(data.messages) ? data.messages : [];
 
-      const tbody = document.getElementById("alertList");
-      tbody.innerHTML = "";
-      alerts.forEach(alert => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${alert.message}</td><td>${alert.timestamp}</td><td>${alert.sent}</td><td>${alert.delivered}</td><td>${alert.failed}</td>`;
-          tbody.appendChild(tr);
-      });
+      renderAlertsTable(messages);
   } catch (err) {
       console.error("Failed to load alerts:", err);
+      renderAlertsTable([]);
   }
+}
+
+function renderAlertsTable(messages) {
+  const tbody = document.getElementById("alertList");
+  tbody.innerHTML = "";
+
+  if (messages.length === 0) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="5" style="text-align: center;">No alerts sent yet</td>`;
+      tbody.appendChild(tr);
+      return;
+  }
+
+  messages.forEach(msg => {
+      const tr = document.createElement("tr");
+      const timestamp = msg.created_at ? new Date(msg.created_at).toLocaleString() : "N/A";
+      const messagePreview = msg.body ? (msg.body.length > 60 ? msg.body.substring(0, 60) + "..." : msg.body) : "—";
+      tr.innerHTML = `
+          <td>${messagePreview}</td>
+          <td>${timestamp}</td>
+          <td>${msg.total_recipients || 0}</td>
+          <td>${msg.delivered || 0}</td>
+          <td>${msg.failed || 0}</td>
+      `;
+      tbody.appendChild(tr);
+  });
 }
 /**PSEUDOCODE: sendAlert() 
  * Get the message input from the alert testarea
@@ -136,9 +175,12 @@ async function sendAlert() {
   if (message.length > 250) return alert("Message too long. Keep it under 250 characters.");
 
   try {
-      const response = await fetch("https://e65e-2600-4040-2150-ad00-e152-29ae-bd46-ff92.ngrok-free.app/broadcast", {
+      const response = await fetch("/broadcast", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+              "Content-Type": "application/json",
+              "x-api-key": localStorage.getItem("curve_admin_api_key") || ""
+          },
           body: JSON.stringify({ message })
       });
 
@@ -147,7 +189,9 @@ async function sendAlert() {
 
       if (result.success) {
           alert(`✅ Broadcast sent to ${result.totalRecipients} subscribers.`);
+          document.getElementById("alertMessage").value = ""; // Clear textarea
           closeModal();
+          loadAlerts(); // Refresh alerts table
       } else {
           alert(`⚠️ Broadcast error: ${result.error}`);
       }
@@ -156,3 +200,71 @@ async function sendAlert() {
       alert("❌ Could not send broadcast. Check console for details.");
   }
 }
+
+// Stub functions referenced by admin.html buttons
+function refreshSubscribers() {
+  loadSubscribers();
+}
+
+function exportSubscribers() {
+  alert("Export CSV feature coming soon.");
+}
+
+function scheduleAlert() {
+  alert("Schedule feature coming soon.");
+}
+
+function saveApiKey() {
+  const apiKeyInput = document.getElementById("apiKeyInput");
+  const key = apiKeyInput.value.trim();
+  if (!key) {
+    alert("Please enter an API key.");
+    return;
+  }
+  localStorage.setItem("curve_admin_api_key", key);
+  alert("✅ API key saved.");
+}
+
+// Initialize data on page load
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("✅ Admin dashboard initialized");
+
+  // Attach nav button listeners
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      showSection(btn.dataset.section);
+    });
+  });
+
+  // Logout button
+  document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    console.log("Logout clicked");
+    alert("Logout functionality coming soon.");
+  });
+
+  // Subscribers section buttons
+  document.getElementById("refreshSubscribersBtn")?.addEventListener("click", refreshSubscribers);
+  document.getElementById("exportSubscribersBtn")?.addEventListener("click", exportSubscribers);
+
+  // Alerts section buttons
+  document.getElementById("newAlertBtn")?.addEventListener("click", showNewAlertModal);
+
+  // Settings section buttons
+  document.getElementById("saveApiKeyBtn")?.addEventListener("click", saveApiKey);
+
+  // Prefill API key if exists
+  const savedApiKey = localStorage.getItem("curve_admin_api_key");
+  if (savedApiKey) {
+    const apiKeyInput = document.getElementById("apiKeyInput");
+    if (apiKeyInput) apiKeyInput.value = savedApiKey;
+  }
+
+  // Modal buttons
+  document.getElementById("sendAlertBtn")?.addEventListener("click", sendAlert);
+  document.getElementById("scheduleAlertBtn")?.addEventListener("click", scheduleAlert);
+  document.getElementById("cancelModalBtn")?.addEventListener("click", closeModal);
+
+  // Load initial data
+  loadSubscribers();
+  loadAlerts();
+});

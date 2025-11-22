@@ -9,14 +9,22 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "firebase-admin": "^13.3.0",
     "helmet": "^8.1.0",
+    "pg": "^8.11.3",
     "twilio": "^5.5.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarcusPiperAllen/curve-sms-safety-project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MarcusPiperAllen/curve-sms-safety-project/issues"
+  },
+  "homepage": "https://github.com/MarcusPiperAllen/curve-sms-safety-project#readme",
+  "description": ""
 }

@@ -10,14 +10,14 @@
   <header>
     <h1>Curve Alerts Admin</h1>
     <input type="text" id="search" placeholder="Search..." />
-    <button id="logout">Logout</button>
+    <button id="logoutBtn">Logout</button>
   </header>
 
   <nav>
-    <button onclick="showSection('dashboard')">Dashboard</button>
-    <button onclick="showSection('subscribers')">Subscribers</button>
-    <button onclick="showSection('alerts')">Alerts</button>
-    <button onclick="showSection('settings')">Settings</button>
+    <button id="tab-dashboard" class="nav-btn" data-section="dashboard">Dashboard</button>
+    <button id="tab-subscribers" class="nav-btn" data-section="subscribers">Subscribers</button>
+    <button id="tab-alerts" class="nav-btn" data-section="alerts">Alerts</button>
+    <button id="tab-settings" class="nav-btn" data-section="settings">Settings</button>
   </nav>
 
   <main id="content">
@@ -30,8 +30,8 @@
     <section id="subscribers" class="hidden">
       <h2>Subscribers</h2>
       <input type="text" id="filter" placeholder="Filter by phone or name" />
-      <button onclick="refreshSubscribers()">Refresh</button>
-      <button onclick="exportSubscribers()">Export CSV</button>
+      <button id="refreshSubscribersBtn">Refresh</button>
+      <button id="exportSubscribersBtn">Export CSV</button>
       <table>
         <thead>
           <tr>
@@ -49,7 +49,7 @@
 
     <section id="alerts" class="hidden">
       <h2>Alerts</h2>
-      <button onclick="showNewAlertModal()">New Alert</button>
+      <button id="newAlertBtn">New Alert</button>
       <table>
         <thead>
           <tr>
@@ -68,9 +68,9 @@
 
     <section id="settings" class="hidden">
       <h2>Settings</h2>
-      <label for="apiKey">API Key</label>
-      <input type="text" id="apiKey" readonly />
-      <button onclick="rotateApiKey()">Rotate</button>
+      <label for="apiKeyInput">API Key</label>
+      <input type="text" id="apiKeyInput" placeholder="Enter your API key" />
+      <button id="saveApiKeyBtn">Save</button>
     </section>
   </main>
 
@@ -79,9 +79,9 @@
     <div>
       <textarea id="alertMessage" placeholder="Enter alert message..."></textarea>
       <input type="datetime-local" id="scheduleTime" />
-      <button onclick="sendAlert()">Send Now</button>
-      <button onclick="scheduleAlert()">Schedule Later</button>
-      <button onclick="closeModal()">Cancel</button>
+      <button id="sendAlertBtn">Send Now</button>
+      <button id="scheduleAlertBtn">Schedule Later</button>
+      <button id="cancelModalBtn">Cancel</button>
     </div>
   </div>
 

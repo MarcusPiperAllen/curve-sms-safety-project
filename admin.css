@@ -28,15 +28,11 @@
   
   /* Main sections */
   main section {
-    display: none;      /* hide all by default */
+    display: block;     /* visible by default */
     margin-top: 20px;
   }
-  
-  /* Show dashboard by default */
-  #dashboard {
-    display: block;
-  }
-  
+
+  /* Hidden class hides sections */
   .hidden {
     display: none !important;
   }
