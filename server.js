@@ -219,7 +219,7 @@ app.get("/admin", (req, res) => {
 });
 
 // 12. Health Check Route
-app.get("/", (_req, res) => res.send("✅ CURVE SMS Safety Server is running."));
+app.get("/", (_req, res) => res.send("✅ Curve Community Alerts Server is running."));
 
 // 13. Global Error Handler
 app.use((err, _req, res, _next) => {

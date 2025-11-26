@@ -1,4 +1,4 @@
-# CURVE SMS Safety - Deployment Guide
+# Curve Community Alerts - Deployment Guide
 
 ## Local Development Setup
 

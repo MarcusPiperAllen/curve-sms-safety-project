@@ -1,5 +1,5 @@
 -- setup.sql
--- PostgreSQL schema for CURVE SMS Safety project
+-- PostgreSQL schema for Curve Community Alerts project
 -- Run this to initialize your database
 
 -- Drop existing tables (comment out in production if you want to preserve data)

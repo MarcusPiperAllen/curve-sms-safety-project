@@ -1,4 +1,4 @@
-📱 CURVE SMS Safety Project - Analysis
+📱 Curve Community Alerts Project - Analysis
 
   What I Can Tell You're Building
 
@@ -277,11 +277,11 @@ What’s NOT production-level:
 
 ---
 
-## 8. What Curve SMS Safety Actually Is (My Vision)
+## 8. What Curve Community Alerts Actually Is (My Vision)
 
 Your inference is very close to my intention.
 
-Curve SMS is meant to be:
+Curve Community Alerts is meant to be:
 - A **community/property safety and communication system**
 - Primary users:
   - Property management teams

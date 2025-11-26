@@ -1,4 +1,4 @@
-// db.js - PostgreSQL database layer for CURVE SMS Safety
+// db.js - PostgreSQL database layer for Curve Community Alerts
 const { Pool } = require("pg");
 
 // Create connection pool
