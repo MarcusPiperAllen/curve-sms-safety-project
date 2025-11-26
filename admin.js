@@ -232,9 +232,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Attach nav button listeners
   document.querySelectorAll(".nav-btn").forEach(btn => {
     btn.addEventListener("click", () => {
+      // Update active tab styling
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
       showSection(btn.dataset.section);
     });
   });
+
+  // Set Dashboard tab as active by default
+  document.getElementById("tab-dashboard")?.classList.add("active");
 
   // Logout button
   document.getElementById("logoutBtn")?.addEventListener("click", () => {

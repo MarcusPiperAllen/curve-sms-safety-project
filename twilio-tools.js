@@ -20,7 +20,7 @@ async function sendWelcomeSMS(phone) {
     const msg = await client.messages.create({
       to: phone,
       from: process.env.TWILIO_PHONE_NUMBER,
-      body: '✅ Welcome to CURVE Safety Alerts! You are now subscribed.'
+      body: 'Curve Community Alerts: You are now subscribed to receive building updates. Reply STOP to cancel, HELP for help.'
     });
     console.log(`[${now()}] ✅ Welcome SMS sent: ${msg.sid}`);
     return msg;
@@ -93,7 +93,7 @@ module.exports = {
 
 // 4) CLI Execution - Only runs when executed directly
 if (require.main === module) {
-  const message = process.argv[2] || '📢 Test broadcast from CURVE Safety Alerts!';
+  const message = process.argv[2] || 'Curve Community Alerts: This is a test broadcast.';
   const testNumbers = [
     process.env.TARGET_PHONE_NUMBER,
     process.env.TEST_PHONE_NUMBER_2 // Configurable second test number
