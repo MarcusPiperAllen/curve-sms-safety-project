@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CurveLink – Smart Community Notifications</title>
-  <meta name="description" content="Stay connected with instant SMS notifications for your community. Receive emergency alerts, maintenance updates, and important announcements. Reply STOP anytime to opt out.">
-  <meta property="og:title" content="CurveLink – Smart Community Notifications">
-  <meta property="og:description" content="Instant SMS notifications for modern communities. Stay informed about emergencies, outages, and important updates. Easy opt-in and opt-out.">
+  <title>CurveLink – Join the Alert Network</title>
+  <meta name="description" content="Join your community's instant alert network. Receive real-time safety notifications and emergency updates directly to your phone.">
+  <meta property="og:title" content="CurveLink – Smart Community Safety">
+  <meta property="og:description" content="Instant safety notifications for modern communities. Join your building's alert network today.">
   <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -20,183 +20,155 @@
     
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #0a0a0f;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 24px;
+      color: #ffffff;
     }
     
     .container {
-      max-width: 440px;
+      max-width: 420px;
       width: 100%;
-      background: #ffffff;
-      padding: 48px 40px;
+      text-align: center;
+    }
+    
+    .shield-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
       border-radius: 16px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    }
-    
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-    
-    .logo-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 0 40px rgba(34, 197, 94, 0.3);
     }
     
-    .logo-icon svg {
-      width: 24px;
-      height: 24px;
+    .shield-icon svg {
+      width: 32px;
+      height: 32px;
       fill: white;
     }
     
     h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: #1a1a2e;
-      letter-spacing: -0.02em;
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     
     .tagline {
-      color: #64748b;
-      font-size: 0.875rem;
-      font-weight: 500;
-      margin-bottom: 32px;
-    }
-    
-    .subheadline {
-      color: #475569;
-      margin-bottom: 28px;
+      color: #71717a;
       font-size: 1rem;
-      line-height: 1.6;
+      font-weight: 500;
+      margin-bottom: 40px;
     }
     
-    .features {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-bottom: 32px;
+    .hero-text {
+      font-size: 1.125rem;
+      color: #a1a1aa;
+      line-height: 1.7;
+      margin-bottom: 40px;
     }
     
-    .feature {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    
-    .feature-icon {
-      width: 32px;
-      height: 32px;
-      min-width: 32px;
-      background: #f0f4ff;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .feature-icon svg {
-      width: 16px;
-      height: 16px;
-      stroke: #667eea;
-    }
-    
-    .feature-text h3 {
-      font-size: 0.875rem;
+    .hero-text strong {
+      color: #22c55e;
       font-weight: 600;
-      color: #1a1a2e;
-      margin-bottom: 2px;
     }
     
-    .feature-text p {
-      font-size: 0.8rem;
-      color: #64748b;
-      line-height: 1.4;
-    }
-    
-    form {
+    .card {
+      background: linear-gradient(145deg, #18181b 0%, #1f1f23 100%);
+      border: 1px solid #27272a;
+      border-radius: 20px;
+      padding: 32px 28px;
       margin-bottom: 24px;
     }
     
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      font-size: 0.875rem;
-      color: #374151;
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fafafa;
+      margin-bottom: 20px;
+    }
+    
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
     
     input[type="tel"] {
       width: 100%;
-      padding: 14px 16px;
-      margin-bottom: 16px;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
+      padding: 16px 20px;
+      background: #09090b;
+      border: 1.5px solid #27272a;
+      border-radius: 12px;
       font-size: 1rem;
       font-family: inherit;
+      color: #fafafa;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     
     input[type="tel"]:focus {
       outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
     }
     
     input[type="tel"]::placeholder {
-      color: #94a3b8;
+      color: #52525b;
     }
     
     .checkbox-group {
-      margin-bottom: 20px;
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 12px;
+      text-align: left;
     }
     
     .checkbox-group input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
       margin-top: 2px;
-      accent-color: #667eea;
+      accent-color: #22c55e;
       cursor: pointer;
     }
     
     .checkbox-group label {
-      font-weight: 400;
       font-size: 0.875rem;
-      color: #475569;
-      margin-bottom: 0;
+      color: #a1a1aa;
+      line-height: 1.5;
       cursor: pointer;
     }
     
     button {
       width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 16px;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
       color: #fff;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
       font-family: inherit;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
     
     button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 20px -10px rgba(102, 126, 234, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -8px rgba(34, 197, 94, 0.4);
     }
     
     button:active {
@@ -204,7 +176,8 @@
     }
     
     button:disabled {
-      background: #cbd5e1;
+      background: #27272a;
+      color: #52525b;
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
@@ -213,117 +186,117 @@
     .message {
       margin-top: 16px;
       font-size: 0.875rem;
-      text-align: center;
+      font-weight: 500;
     }
     
     .message.success {
-      color: #059669;
+      color: #22c55e;
     }
     
     .message.error {
-      color: #dc2626;
+      color: #ef4444;
     }
     
-    .consent-text {
-      font-size: 0.75rem;
-      color: #94a3b8;
-      line-height: 1.5;
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+    
+    .feature {
       text-align: center;
     }
     
-    .consent-text a {
-      color: #667eea;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    
-    .consent-text a:hover {
-      text-decoration: underline;
-    }
-    
-    .divider {
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 8px;
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 10px;
       display: flex;
       align-items: center;
-      margin: 24px 0;
-      gap: 16px;
+      justify-content: center;
     }
     
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #e2e8f0;
+    .feature-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: #22c55e;
     }
     
-    .divider span {
+    .feature span {
       font-size: 0.75rem;
-      color: #94a3b8;
+      color: #71717a;
       font-weight: 500;
-      text-transform: uppercase;
+    }
+    
+    .legal {
+      font-size: 0.7rem;
+      color: #52525b;
+      line-height: 1.6;
+      margin-top: 20px;
+    }
+    
+    .legal a {
+      color: #71717a;
+      text-decoration: none;
+    }
+    
+    .legal a:hover {
+      color: #a1a1aa;
+    }
+    
+    .powered-by {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid #1f1f23;
+      text-align: center;
+    }
+    
+    .powered-by span {
+      font-size: 0.75rem;
+      color: #3f3f46;
+      font-weight: 500;
       letter-spacing: 0.05em;
     }
     
-    .sms-info {
-      background: #f8fafc;
-      border-radius: 10px;
-      padding: 16px;
-      text-align: center;
+    .powered-by strong {
+      color: #52525b;
+      font-weight: 700;
     }
     
-    .sms-info p {
-      font-size: 0.8rem;
-      color: #64748b;
-      line-height: 1.5;
-    }
-    
-    .sms-info strong {
-      color: #1a1a2e;
-    }
-    
-    .footer {
-      margin-top: 28px;
-      padding-top: 20px;
-      border-top: 1px solid #f1f5f9;
-      text-align: center;
-    }
-    
-    .footer a {
-      color: #94a3b8;
-      text-decoration: none;
-      font-size: 0.75rem;
-      font-weight: 500;
-      margin: 0 12px;
-      transition: color 0.2s;
-    }
-    
-    .footer a:hover {
-      color: #667eea;
+    .gables-badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      color: #71717a;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
   </style>
 </head>
 <body>
-  <!--
-    RESIDENT OPT-IN PAGE - CurveLink
-    Residents use this page (or scan QR code) to opt in to SMS alerts.
-    They can also control their subscription by texting START/STOP/HELP directly to the Twilio number.
-    Admins use admin.html to manage subscribers and send broadcasts.
-  -->
   <div class="container">
-    <div class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
-          <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <h1>CurveLink</h1>
+    <div class="shield-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="white"/>
+      </svg>
     </div>
-    <p class="tagline">Smart Community Notifications</p>
     
-    <p class="subheadline">Stay connected with instant SMS notifications about outages, safety alerts, and important updates for your community.</p>
-
+    <h1>CurveLink</h1>
+    <p class="tagline">Community Safety Network</p>
+    
+    <p class="hero-text">
+      Get <strong>instant alerts</strong> for emergencies, outages, and critical updates. Stay connected to your community's safety network.
+    </p>
+    
     <div class="features">
       <div class="feature">
         <div class="feature-icon">
@@ -331,25 +304,16 @@
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
         </div>
-        <div class="feature-text">
-          <h3>Instant Alerts</h3>
-          <p>Get notified immediately about emergencies and outages</p>
-        </div>
+        <span>Instant</span>
       </div>
-      
       <div class="feature">
         <div class="feature-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
           </svg>
         </div>
-        <div class="feature-text">
-          <h3>Community-Specific</h3>
-          <p>Only receive updates relevant to your building</p>
-        </div>
+        <span>Secure</span>
       </div>
-      
       <div class="feature">
         <div class="feature-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -357,38 +321,34 @@
             <polyline points="22 4 12 14.01 9 11.01"></polyline>
           </svg>
         </div>
-        <div class="feature-text">
-          <h3>Easy Opt-Out</h3>
-          <p>Reply STOP anytime to unsubscribe instantly</p>
-        </div>
+        <span>Reliable</span>
       </div>
     </div>
-
-    <form id="optInForm">
-      <label for="phone">Mobile Phone Number</label>
-      <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567"
-        pattern="^\+?[1-9]\d{1,14}$" required aria-label="Enter phone number">
-
-      <div class="checkbox-group">
-        <input type="checkbox" id="consent" name="consent" required>
-        <label for="consent">I agree to receive SMS alerts from my community.</label>
-      </div>
-
-      <button type="submit" id="submitBtn">Get Started</button>
-    </form>
-    <div class="message" id="optInStatus"></div>
-
-    <p class="consent-text">By subscribing, you agree to our <a href="/terms.html">Terms of Service</a> and <a href="/privacy.html">Privacy Policy</a>. Message & data rates may apply.</p>
-
-    <div class="divider"><span>or</span></div>
     
-    <div class="sms-info">
-      <p>Text <strong>START</strong> to our number to subscribe<br>Reply <strong>STOP</strong> anytime to opt out</p>
-    </div>
+    <div class="card">
+      <h2 class="card-title">Join the Alert Network</h2>
+      <form id="optInForm">
+        <input type="tel" id="phone" name="phone" placeholder="Enter your mobile number"
+          pattern="^\+?[1-9]\d{1,14}$" required aria-label="Enter phone number">
 
-    <div class="footer">
-      <a href="/privacy.html">Privacy Policy</a>
-      <a href="/terms.html">Terms of Service</a>
+        <div class="checkbox-group">
+          <input type="checkbox" id="consent" name="consent" required>
+          <label for="consent">I agree to receive SMS safety alerts from my community.</label>
+        </div>
+
+        <button type="submit" id="submitBtn">Activate Alerts</button>
+      </form>
+      <div class="message" id="optInStatus"></div>
+      
+      <p class="legal">
+        By joining, you agree to our <a href="/terms.html">Terms</a> & <a href="/privacy.html">Privacy Policy</a>. 
+        Msg & data rates apply. Reply STOP to cancel.
+      </p>
+    </div>
+    
+    <div class="powered-by">
+      <span>Powered by <strong>CurveLink</strong></span>
+      <div class="gables-badge">Gables Residential</div>
     </div>
   </div>
 
