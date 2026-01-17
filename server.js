@@ -36,7 +36,7 @@ app.use(express.static(__dirname)); // Serve static files
     console.log(`${key}:`, process.env[key] ? "✔️" : `❌ MISSING`);
 });
 if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
-    throw new Error("🚨 Twilio credentials are missing in .env file!");
+    console.warn("⚠️ Twilio credentials are missing. SMS features will not work until you add them.");
 }
 
 // 4. Subscription Helpers
@@ -228,5 +228,5 @@ app.use((err, _req, res, _next) => {
 });
 
 // 14. Start Server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server listening on port ${PORT}`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, "0.0.0.0", () => console.log(`🚀 Server listening on port ${PORT}`));
