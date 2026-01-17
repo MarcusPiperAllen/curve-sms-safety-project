@@ -1,8 +1,9 @@
 -- setup.sql
--- PostgreSQL schema for Curve Community Alerts project
+-- PostgreSQL schema for CurveLink project
 -- Run this to initialize your database
 
 -- Drop existing tables (comment out in production if you want to preserve data)
+DROP TABLE IF EXISTS reports CASCADE;
 DROP TABLE IF EXISTS message_recipients CASCADE;
 DROP TABLE IF EXISTS messages CASCADE;
 DROP TABLE IF EXISTS subscribers CASCADE;
@@ -31,11 +32,23 @@ CREATE TABLE message_recipients (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Reports table (tracks issues reported by residents via SMS)
+CREATE TABLE reports (
+    id SERIAL PRIMARY KEY,
+    phone VARCHAR(20) NOT NULL,
+    issue TEXT NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for performance
 CREATE INDEX idx_subscribers_phone ON subscribers(phone);
 CREATE INDEX idx_subscribers_status ON subscribers(status);
 CREATE INDEX idx_message_recipients_message_id ON message_recipients(message_id);
 CREATE INDEX idx_message_recipients_phone ON message_recipients(phone);
+CREATE INDEX idx_reports_phone ON reports(phone);
+CREATE INDEX idx_reports_status ON reports(status);
+CREATE INDEX idx_reports_created_at ON reports(created_at);
 
 -- Verify tables were created
 SELECT 'Tables created successfully!' AS status;

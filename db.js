@@ -74,6 +74,26 @@ async function updateRecipientStatus(messageId, phone, status) {
   await pool.query(query, [status, messageId, phone]);
 }
 
+// ============ REPORT FUNCTIONS ============
+
+async function addReport(phone, issue) {
+  const query = "INSERT INTO reports (phone, issue) VALUES ($1, $2) RETURNING *";
+  const result = await pool.query(query, [phone, issue]);
+  return result.rows[0];
+}
+
+async function getReports() {
+  const query = "SELECT * FROM reports ORDER BY created_at DESC";
+  const result = await pool.query(query);
+  return result.rows;
+}
+
+async function updateReportStatus(reportId, status) {
+  const query = "UPDATE reports SET status = $1 WHERE id = $2 RETURNING *";
+  const result = await pool.query(query, [status, reportId]);
+  return result.rows[0];
+}
+
 // ============ EXPORTS ============
 
 module.exports = {
@@ -84,5 +104,8 @@ module.exports = {
   addMessage,
   linkMessageToRecipient,
   getMessages,
-  updateRecipientStatus
+  updateRecipientStatus,
+  addReport,
+  getReports,
+  updateReportStatus
 };

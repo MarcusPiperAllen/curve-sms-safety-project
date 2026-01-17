@@ -14,7 +14,9 @@ const {
   addMessage,
   linkMessageToRecipient,
   getMessages,
-  updateRecipientStatus
+  updateRecipientStatus,
+  addReport,
+  getReports
 } = require("./db");
 
 // 2. Initialize App & Middleware
@@ -64,8 +66,14 @@ app.post("/sms", async (req, res) => {
             twiml.message("CurveLink: You're now subscribed. Reply STOP to opt out, HELP for help.");
             console.log(`User ${from} subscribed.`);
         } else if (body.startsWith("REPORT ")) {
-            console.log(`Report from ${from}: ${body.slice(7)}`);
-            twiml.message("Thanks, we received your report.");
+            const issue = req.body.Body?.trim().slice(7);
+            if (!issue || issue.trim().length === 0) {
+                twiml.message("CurveLink: Please include a description of your issue. Example: REPORT Water leak in hallway");
+            } else {
+                await addReport(from, issue);
+                console.log(`📋 Report saved from ${from}: ${issue}`);
+                twiml.message("CurveLink: Thank you! Your report has been received and our team will review it shortly.");
+            }
         } else if (body === "STOP") {
             await markUserOptedOut(from);
             twiml.message("CurveLink: You've been unsubscribed. Text START to re-subscribe.");
@@ -176,6 +184,16 @@ app.get("/alerts", async (req, res) => {
     } catch (err) {
         console.error("❌ Error fetching alerts:", err);
         res.status(500).json({ error: "Failed to fetch alerts" });
+    }
+});
+
+app.get("/reports", async (req, res) => {
+    try {
+        const reports = await getReports();
+        res.json({ reports });
+    } catch (err) {
+        console.error("❌ Error fetching reports:", err);
+        res.status(500).json({ error: "Failed to fetch reports" });
     }
 });
 
