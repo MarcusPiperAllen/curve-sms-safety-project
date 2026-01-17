@@ -35,8 +35,9 @@ The following environment variables are required for full functionality:
 
 ## Development
 - Server runs on port 5000
-- Database: PostgreSQL with tables for subscribers, messages, and message_recipients
+- Database: PostgreSQL with tables for subscribers, messages, message_recipients, and reports
 - Run with: `npm start`
+- Sandbox Mode: Set `NODE_ENV=development` to log SMS to console instead of sending real texts
 
 ## API Endpoints
 - `POST /sms` - Twilio webhook for incoming SMS

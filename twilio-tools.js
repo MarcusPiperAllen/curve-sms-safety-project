@@ -1,46 +1,75 @@
-// 1) Load environment variables
 require('dotenv').config();
 
-// Helper function for timestamped logs
 const now = () => new Date().toISOString();
 
-// 2) Create the Twilio client
-const client = require('twilio')(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
+const SANDBOX_MODE = process.env.NODE_ENV === 'development';
+const TWILIO_CONFIGURED = !!(
+  process.env.TWILIO_ACCOUNT_SID &&
+  process.env.TWILIO_AUTH_TOKEN &&
+  process.env.TWILIO_PHONE_NUMBER
 );
 
-/**
- * Send a welcome SMS to a given phone number.
- * @param {string} phone - E.164 format (e.g. "+1234567890")
- * @returns {Promise<object>} - resolves with the sent message object
- */
-async function sendWelcomeSMS(phone) {
+let client = null;
+
+if (TWILIO_CONFIGURED && !SANDBOX_MODE) {
+  client = require('twilio')(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_AUTH_TOKEN
+  );
+  console.log(`[${now()}] Twilio client initialized`);
+} else if (SANDBOX_MODE) {
+  console.log(`[${now()}] SANDBOX MODE: SMS will be logged to console (NODE_ENV=development)`);
+} else {
+  console.warn(`[${now()}] Twilio credentials not configured. SMS features disabled.`);
+}
+
+async function sendSMS(to, body) {
+  if (SANDBOX_MODE) {
+    console.log(`[${now()}] [SANDBOX] SMS to ${to}: ${body}`);
+    return { sid: 'SANDBOX_' + Date.now(), status: 'sandbox' };
+  }
+
+  if (!client) {
+    console.warn(`[${now()}] Twilio not configured. Cannot send SMS.`);
+    return { error: 'Twilio not configured', status: 'failed' };
+  }
+
   try {
     const msg = await client.messages.create({
-      to: phone,
+      to,
       from: process.env.TWILIO_PHONE_NUMBER,
-      body: 'CurveLink: You are now subscribed to receive building updates. Reply STOP to cancel, HELP for help.'
+      body
     });
-    console.log(`[${now()}] ✅ Welcome SMS sent: ${msg.sid}`);
-    return msg;
+    console.log(`[${now()}] SMS sent to ${to}, SID: ${msg.sid}`);
+    return { sid: msg.sid, status: 'sent' };
   } catch (err) {
-    console.error(`[${now()}] ❌ Welcome SMS error (${phone}): ${err.message}`);
+    console.error(`[${now()}] SMS error (${to}): ${err.message}`);
     throw err;
   }
 }
 
-/**
- * Broadcast a message to multiple phone numbers.
- * @param {string[]} phones - Array of E.164 formatted numbers
- * @param {string} message - Text to send
- * @returns {Promise<object[]>} - Array of results including phone, SID/status, or error
- */
+async function sendWelcomeSMS(phone) {
+  const body = 'CurveLink: You are now subscribed to receive building updates. Reply STOP to cancel, HELP for help.';
+  return sendSMS(phone, body);
+}
+
 async function broadcastSMS(phones, message) {
   const results = [];
   const statusCallback = process.env.STATUS_CALLBACK_URL || null;
 
   for (let to of phones) {
+    if (SANDBOX_MODE) {
+      console.log(`[${now()}] [SANDBOX] Broadcast to ${to}: ${message}`);
+      results.push({ to, sid: 'SANDBOX_' + Date.now(), status: 'sent' });
+      continue;
+    }
+
+    if (!client) {
+      console.warn(`[${now()}] Twilio not configured. Skipping ${to}`);
+      results.push({ to, error: 'Twilio not configured', status: 'failed' });
+      continue;
+    }
+
     try {
       const msgOptions = {
         to,
@@ -48,18 +77,16 @@ async function broadcastSMS(phones, message) {
         body: message
       };
 
-      // Add status callback if configured
       if (statusCallback) {
         msgOptions.statusCallback = statusCallback;
       }
 
       const msg = await client.messages.create(msgOptions);
-      console.log(`[${now()}] ✅ Sent to ${to}, SID: ${msg.sid}`);
+      console.log(`[${now()}] Sent to ${to}, SID: ${msg.sid}`);
       results.push({ to, sid: msg.sid, status: 'sent' });
     } catch (err) {
-      console.error(`[${now()}] ❌ Failed to ${to}: ${err.message}`);
+      console.error(`[${now()}] Failed to ${to}: ${err.message}`);
 
-      // Retry logic with a 1-second delay
       await new Promise(r => setTimeout(r, 1000));
       try {
         const msgOptions = {
@@ -73,10 +100,10 @@ async function broadcastSMS(phones, message) {
         }
 
         const retryMsg = await client.messages.create(msgOptions);
-        console.log(`[${now()}] 🔁 Retry successful: ${to}, SID: ${retryMsg.sid}`);
+        console.log(`[${now()}] Retry successful: ${to}, SID: ${retryMsg.sid}`);
         results.push({ to, sid: retryMsg.sid, status: 'sent (retry)' });
       } catch (retryErr) {
-        console.error(`[${now()}] ❌ Final failure for ${to}: ${retryErr.message}`);
+        console.error(`[${now()}] Final failure for ${to}: ${retryErr.message}`);
         results.push({ to, error: retryErr.message, status: 'failed' });
       }
     }
@@ -85,22 +112,45 @@ async function broadcastSMS(phones, message) {
   return results;
 }
 
-// 3) Export functions for use in server.js or other modules
+async function verifyTwilioConnection() {
+  if (SANDBOX_MODE) {
+    console.log(`[${now()}] [SANDBOX] Twilio connection test skipped (development mode)`);
+    return { success: true, mode: 'sandbox' };
+  }
+
+  if (!client) {
+    console.warn(`[${now()}] Twilio credentials not configured`);
+    return { success: false, error: 'Twilio not configured' };
+  }
+
+  try {
+    const account = await client.api.accounts(process.env.TWILIO_ACCOUNT_SID).fetch();
+    console.log(`[${now()}] Twilio connection verified: ${account.friendlyName} (${account.status})`);
+    return { success: true, accountName: account.friendlyName, status: account.status };
+  } catch (err) {
+    console.error(`[${now()}] Twilio connection failed: ${err.message}`);
+    return { success: false, error: err.message };
+  }
+}
+
 module.exports = {
+  sendSMS,
   sendWelcomeSMS,
-  broadcastSMS
+  broadcastSMS,
+  verifyTwilioConnection,
+  SANDBOX_MODE,
+  TWILIO_CONFIGURED
 };
 
-// 4) CLI Execution - Only runs when executed directly
 if (require.main === module) {
-  const message = process.argv[2] || 'CurveLink: This is a test broadcast.';
-  const testNumbers = [
-    process.env.TARGET_PHONE_NUMBER,
-    process.env.TEST_PHONE_NUMBER_2 // Configurable second test number
-  ];
-
-  console.log(`[${now()}] 🚀 Running CLI Broadcast...`);
-  broadcastSMS(testNumbers, message)
-    .then(res => console.log(`[${now()}] 📝 Broadcast results:`, res))
-    .catch(err => console.error(`[${now()}] ❌ Broadcast error:`, err));
+  console.log(`[${now()}] Testing Twilio connection...`);
+  verifyTwilioConnection()
+    .then(result => {
+      console.log(`[${now()}] Connection test result:`, result);
+      process.exit(result.success ? 0 : 1);
+    })
+    .catch(err => {
+      console.error(`[${now()}] Test error:`, err);
+      process.exit(1);
+    });
 }
