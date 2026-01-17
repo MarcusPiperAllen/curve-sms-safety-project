@@ -16,7 +16,8 @@ const {
   getMessages,
   updateRecipientStatus,
   addReport,
-  getReports
+  getReports,
+  updateReportStatus
 } = require("./db");
 
 // 2. Initialize App & Middleware
@@ -34,11 +35,14 @@ app.use(express.json());
 app.use(express.static(__dirname)); // Serve static files
 
 // 3. Verify Environment Variables
-["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER", "BROADCAST_API_KEY"].forEach(key => {
+["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_PHONE_NUMBER", "BROADCAST_API_KEY", "ADMIN_PASSWORD"].forEach(key => {
     console.log(`${key}:`, process.env[key] ? "✔️" : `❌ MISSING`);
 });
 if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
     console.warn("⚠️ Twilio credentials are missing. SMS features will not work until you add them.");
+}
+if (!process.env.ADMIN_PASSWORD) {
+    console.warn("⚠️ ADMIN_PASSWORD is missing. Admin broadcast feature will not work.");
 }
 
 // 4. Subscription Helpers
@@ -218,7 +222,85 @@ app.post("/api/subscribe", async (req, res) => {
     }
 });
 
-// 10. DEV ONLY - remove in production
+// 10. Password-Protected Admin Broadcast Endpoint
+app.post("/admin/broadcast", async (req, res) => {
+    const { message, reportId, adminPassword } = req.body;
+    
+    if (!message) {
+        return res.status(400).json({ error: 'Missing "message" field' });
+    }
+    
+    if (!adminPassword) {
+        return res.status(400).json({ error: 'Missing admin password' });
+    }
+    
+    if (adminPassword !== process.env.ADMIN_PASSWORD) {
+        return res.status(401).json({ error: 'Invalid admin password' });
+    }
+    
+    try {
+        const subscribers = await getSubscribers();
+        const phoneList = subscribers.map(sub => sub.phone);
+
+        if (!phoneList.length) {
+            return res.status(200).json({ success: false, message: "No subscribers available." });
+        }
+
+        const { lastInsertRowid: messageId } = await addMessage(message);
+
+        for (const phone of phoneList) {
+            await linkMessageToRecipient(messageId, phone, "pending");
+        }
+
+        const results = await broadcastSMS(phoneList, message);
+
+        for (const r of results) {
+            let status = "pending";
+            if (r.status === "sent" || r.status === "sent (retry)") status = "sent";
+            else if (r.status === "failed") status = "failed";
+            await updateRecipientStatus(messageId, r.to, status);
+        }
+
+        if (reportId) {
+            await updateReportStatus(reportId, "approved");
+        }
+
+        res.json({
+            success: true,
+            messageId,
+            totalRecipients: phoneList.length,
+            sent: results.filter(r => r.status === "sent" || r.status === "sent (retry)").length,
+            failed: results.filter(r => r.status === "failed").length
+        });
+    } catch (err) {
+        console.error("Admin broadcast failed:", err.message || err);
+        res.status(500).json({ error: "Broadcast failed", details: err.message || err });
+    }
+});
+
+// 11. Dismiss Report Endpoint (Password Protected)
+app.post("/reports/:id/dismiss", async (req, res) => {
+    const reportId = parseInt(req.params.id, 10);
+    const { adminPassword } = req.body;
+    
+    if (isNaN(reportId)) {
+        return res.status(400).json({ error: "Invalid report ID" });
+    }
+    
+    if (!adminPassword || adminPassword !== process.env.ADMIN_PASSWORD) {
+        return res.status(401).json({ error: "Invalid admin password" });
+    }
+    
+    try {
+        await updateReportStatus(reportId, "dismissed");
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Failed to dismiss report:", err);
+        res.status(500).json({ error: "Failed to dismiss report" });
+    }
+});
+
+// 12. DEV ONLY - remove in production
 app.post("/dev/subscribe", async (req, res) => {
     const { phone } = req.body;
     if (!phone) return res.status(400).json({ error: "Missing phone" });
@@ -231,7 +313,7 @@ app.post("/dev/subscribe", async (req, res) => {
     }
 });
 
-// 11. Convenience route for admin dashboard
+// 13. Convenience route for admin dashboard
 app.get("/admin", (req, res) => {
     res.sendFile(path.join(__dirname, "admin.html"));
 });

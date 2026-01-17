@@ -28,6 +28,7 @@ The following environment variables are required for full functionality:
 - `TWILIO_AUTH_TOKEN` - Twilio Auth Token
 - `TWILIO_PHONE_NUMBER` - Your Twilio phone number
 - `BROADCAST_API_KEY` - API key for broadcast endpoint authentication
+- `ADMIN_PASSWORD` - Password required to authorize broadcasts and dismiss reports
 
 ### Automatically Configured
 - `DATABASE_URL` - PostgreSQL connection string (provided by Replit)
@@ -40,13 +41,16 @@ The following environment variables are required for full functionality:
 ## API Endpoints
 - `POST /sms` - Twilio webhook for incoming SMS
 - `POST /broadcast` - Send alert to all subscribers (requires x-api-key header)
+- `POST /admin/broadcast` - Password-protected broadcast from admin UI
+- `POST /reports/:id/dismiss` - Password-protected dismiss report
 - `POST /api/subscribe` - Public subscription endpoint
 - `GET /subscribers` - List all active subscribers
 - `GET /alerts` - List all sent alerts
 - `GET /reports` - List all resident-reported issues
-- `GET /admin` - Admin dashboard
+- `GET /admin` - Admin Command Center
 
 ## Recent Changes
-- January 17, 2026: Upgraded landing page UI with modern startup design (Inter font, gradient background, card layout)
+- January 17, 2026: Built Admin Command Center with dark mode UI, Safety Inbox, password-protected broadcasts
+- January 17, 2026: Redesigned landing page with dark mode aesthetic, green accent color, Inter font
 - January 17, 2026: Implemented REPORT SMS feature - residents can text "REPORT [issue]" to log issues to database
 - January 17, 2026: Initial Replit setup, configured for port 5000, PostgreSQL database initialized

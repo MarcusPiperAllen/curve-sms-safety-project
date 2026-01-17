@@ -3,105 +3,184 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CurveLink – Admin Dashboard</title>
-  <meta name="description" content="Admin dashboard for CurveLink. Manage residents, send SMS broadcasts, and view alert history for your community.">
+  <title>CurveLink – Command Center</title>
+  <meta name="description" content="Admin Command Center for CurveLink. Manage residents, review reports, and send SMS broadcasts.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
-  <!--
-    ADMIN DASHBOARD - CurveLink
-    This page is for property management / admins only.
-    It shows subscribers, alert history, and lets admins send broadcasts.
-    Residents do NOT use this page - they opt in via index.html or by texting START/STOP/HELP.
-  -->
   <header>
     <div class="header-content">
-      <h1>CurveLink</h1>
-      <p class="subtitle">Smart community notification management</p>
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="white"/>
+          </svg>
+        </div>
+        <div>
+          <h1>CurveLink</h1>
+          <p class="subtitle">Command Center</p>
+        </div>
+      </div>
     </div>
     <div class="header-actions">
-      <input type="text" id="search" placeholder="Search..." />
-      <a href="/terms.html" class="header-link">Terms & Privacy</a>
-      <button id="logoutBtn">Logout</button>
+      <span class="status-badge">
+        <span class="status-dot"></span>
+        System Online
+      </span>
     </div>
   </header>
 
   <nav>
-    <button id="tab-dashboard" class="nav-btn" data-section="dashboard">Dashboard</button>
-    <button id="tab-subscribers" class="nav-btn" data-section="subscribers">Residents</button>
-    <button id="tab-alerts" class="nav-btn" data-section="alerts">Alerts</button>
-    <button id="tab-settings" class="nav-btn" data-section="settings">Settings</button>
+    <button id="tab-dashboard" class="nav-btn" data-section="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </button>
+    <button id="tab-inbox" class="nav-btn" data-section="inbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+      Safety Inbox
+      <span class="badge" id="inbox-badge">0</span>
+    </button>
+    <button id="tab-subscribers" class="nav-btn" data-section="subscribers">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Residents
+    </button>
+    <button id="tab-alerts" class="nav-btn" data-section="alerts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Broadcast History
+    </button>
+    <button id="tab-settings" class="nav-btn" data-section="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </button>
   </nav>
 
   <main id="content">
-    <!-- Dashboard shows by default (no hidden class) -->
     <section id="dashboard">
       <h2>Dashboard Overview</h2>
-      <p>View key metrics and recent activity for your community alerts.</p>
+      <p class="section-desc">Real-time metrics for your community alert network.</p>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="stat-subscribers">0</span>
+            <span class="stat-label">Active Residents</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon yellow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="stat-pending">0</span>
+            <span class="stat-label">Pending Reports</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="stat-broadcasts">0</span>
+            <span class="stat-label">Broadcasts Sent</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="inbox" class="hidden">
+      <h2>Safety Inbox</h2>
+      <p class="section-desc">Review resident-reported issues and broadcast critical alerts.</p>
+      <div class="section-actions">
+        <button id="refreshReportsBtn" class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh
+        </button>
+      </div>
+      <div id="reportsList" class="reports-list">
+        <div class="empty-state">No pending reports</div>
+      </div>
     </section>
 
     <section id="subscribers" class="hidden">
       <h2>Residents</h2>
       <p class="section-desc">Manage opted-in residents who receive SMS alerts.</p>
       <div class="section-actions">
-        <input type="text" id="filter" placeholder="Filter by phone or name" />
-        <button id="refreshSubscribersBtn">Refresh</button>
-        <button id="exportSubscribersBtn">Export CSV</button>
+        <input type="text" id="filter" placeholder="Filter by phone..." />
+        <button id="refreshSubscribersBtn" class="btn-secondary">Refresh</button>
+        <button id="exportSubscribersBtn" class="btn-secondary">Export CSV</button>
       </div>
       <table>
         <thead>
           <tr>
-            <th>Name</th>
             <th>Phone</th>
             <th>Opt-In Date</th>
             <th>Status</th>
           </tr>
         </thead>
-        <tbody id="subscriberList">
-          <!-- Filled by JavaScript -->
-        </tbody>
+        <tbody id="subscriberList"></tbody>
       </table>
     </section>
 
     <section id="alerts" class="hidden">
-      <h2>Alerts</h2>
-      <p class="section-desc">View sent alerts and their delivery status.</p>
-      <button id="newAlertBtn">New Alert</button>
+      <h2>Broadcast History</h2>
+      <p class="section-desc">View sent alerts and delivery status.</p>
+      <div class="section-actions">
+        <button id="newAlertBtn" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          New Broadcast
+        </button>
+      </div>
       <table>
         <thead>
           <tr>
-            <th>Message Preview</th>
+            <th>Message</th>
             <th>Timestamp</th>
             <th>Sent</th>
             <th>Delivered</th>
             <th>Failed</th>
           </tr>
         </thead>
-        <tbody id="alertList">
-          <!-- Filled by JavaScript -->
-        </tbody>
+        <tbody id="alertList"></tbody>
       </table>
     </section>
 
     <section id="settings" class="hidden">
       <h2>Settings</h2>
-      <p class="section-desc">Configure your broadcast API key for sending alerts.</p>
-      <label for="apiKeyInput">API Key</label>
-      <input type="text" id="apiKeyInput" placeholder="Enter your API key" />
-      <button id="saveApiKeyBtn">Save</button>
+      <p class="section-desc">Configure your API credentials.</p>
+      <div class="settings-form">
+        <label for="apiKeyInput">Broadcast API Key</label>
+        <input type="password" id="apiKeyInput" placeholder="Enter your API key" />
+        <button id="saveApiKeyBtn" class="btn-primary">Save API Key</button>
+      </div>
     </section>
   </main>
 
-  <!-- Modal wrapper now has an inner <div> for styling -->
   <div id="newAlertModal" class="modal hidden">
-    <div>
-      <h3>Send New Alert</h3>
-      <textarea id="alertMessage" placeholder="Enter alert message..."></textarea>
-      <input type="datetime-local" id="scheduleTime" />
+    <div class="modal-content">
+      <h3>Send New Broadcast</h3>
+      <textarea id="alertMessage" placeholder="Enter your alert message..." maxlength="250"></textarea>
+      <div class="char-count"><span id="charCount">0</span>/250</div>
       <div class="modal-actions">
-        <button id="sendAlertBtn">Send Now</button>
-        <button id="scheduleAlertBtn">Schedule Later</button>
+        <button id="sendAlertBtn" class="btn-primary">Send to All Residents</button>
         <button id="cancelModalBtn" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="passwordModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Admin Authentication</h3>
+      <p class="modal-desc">Enter your admin password to authorize this broadcast.</p>
+      <input type="password" id="adminPasswordInput" placeholder="Admin password" />
+      <div id="passwordError" class="error-text hidden">Invalid password. Please try again.</div>
+      <div class="modal-actions">
+        <button id="confirmBroadcastBtn" class="btn-primary">Authorize & Send</button>
+        <button id="cancelPasswordBtn" class="btn-secondary">Cancel</button>
       </div>
     </div>
   </div>
