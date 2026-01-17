@@ -7,13 +7,15 @@ A smart community notification platform built with Node.js and Express that allo
 - `server.js` - Main Express server with API endpoints
 - `db.js` - PostgreSQL database layer using pg pool
 - `twilio-tools.js` - Twilio SMS sending utilities
-- `index.html` - Public subscription landing page
+- `index.html` - Public subscription landing page (modern startup design with Inter font)
 - `admin.html` - Admin dashboard for managing alerts
 - `admin.js` - Admin dashboard frontend logic
 - `admin.css` - Admin dashboard styles
+- `setup.sql` - Database schema for PostgreSQL
 
 ## Key Features
 - SMS subscription management (START/STOP commands)
+- Issue reporting via SMS (REPORT command saves to database)
 - Broadcast alerts to all subscribers
 - Admin dashboard for viewing subscribers and message history
 - Twilio webhook integration for incoming/outgoing SMS
@@ -41,7 +43,10 @@ The following environment variables are required for full functionality:
 - `POST /api/subscribe` - Public subscription endpoint
 - `GET /subscribers` - List all active subscribers
 - `GET /alerts` - List all sent alerts
+- `GET /reports` - List all resident-reported issues
 - `GET /admin` - Admin dashboard
 
 ## Recent Changes
+- January 17, 2026: Upgraded landing page UI with modern startup design (Inter font, gradient background, card layout)
+- January 17, 2026: Implemented REPORT SMS feature - residents can text "REPORT [issue]" to log issues to database
 - January 17, 2026: Initial Replit setup, configured for port 5000, PostgreSQL database initialized
