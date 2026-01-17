@@ -1,7 +1,7 @@
-# Curve Community Alerts - SMS Safety Project
+# CurveLink
 
 ## Overview
-A community SMS alert system built with Node.js and Express that allows building management to broadcast emergency notifications and safety alerts to subscribed residents via Twilio SMS.
+A smart community notification platform built with Node.js and Express that allows building management to broadcast emergency notifications and safety alerts to subscribed residents via Twilio SMS.
 
 ## Project Structure
 - `server.js` - Main Express server with API endpoints

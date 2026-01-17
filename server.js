@@ -61,17 +61,17 @@ app.post("/sms", async (req, res) => {
             twiml.message("Message cannot be empty. Reply START to subscribe, REPORT <...>, or STOP.");
         } else if (body === "START") {
             await markUserSubscribed(from);
-            twiml.message("Curve Community Alerts: You're now subscribed. Reply STOP to opt out, HELP for help.");
+            twiml.message("CurveLink: You're now subscribed. Reply STOP to opt out, HELP for help.");
             console.log(`User ${from} subscribed.`);
         } else if (body.startsWith("REPORT ")) {
             console.log(`Report from ${from}: ${body.slice(7)}`);
             twiml.message("Thanks, we received your report.");
         } else if (body === "STOP") {
             await markUserOptedOut(from);
-            twiml.message("Curve Community Alerts: You've been unsubscribed. Text START to re-subscribe.");
+            twiml.message("CurveLink: You've been unsubscribed. Text START to re-subscribe.");
             console.log(`User ${from} opted out.`);
         } else if (body === "HELP") {
-            twiml.message("Curve Community Alerts: Reply STOP to unsubscribe. For emergencies, call 911. For help, contact your building management.");
+            twiml.message("CurveLink: Reply STOP to unsubscribe. For emergencies, call 911. For help, contact your building management.");
             console.log(`User ${from} requested HELP.`);
         } else {
             twiml.message("Reply START to subscribe, REPORT <...>, HELP, or STOP.");
@@ -193,7 +193,7 @@ app.post("/api/subscribe", async (req, res) => {
     try {
         await addSubscriber(normalizedPhone);
         console.log(`✅ New subscriber via web form: ${normalizedPhone}`);
-        res.json({ success: true, message: "You're now subscribed to Curve Community Alerts!" });
+        res.json({ success: true, message: "You're now subscribed to CurveLink!" });
     } catch (err) {
         console.error("❌ Subscription error:", err);
         res.status(500).json({ success: false, message: "Failed to subscribe. Please try again." });
@@ -219,7 +219,7 @@ app.get("/admin", (req, res) => {
 });
 
 // 12. Health Check Route
-app.get("/", (_req, res) => res.send("✅ Curve Community Alerts Server is running."));
+app.get("/", (_req, res) => res.send("✅ CurveLink Server is running."));
 
 // 13. Global Error Handler
 app.use((err, _req, res, _next) => {

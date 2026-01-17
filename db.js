@@ -1,4 +1,4 @@
-// db.js - PostgreSQL database layer for Curve Community Alerts
+// db.js - PostgreSQL database layer for CurveLink
 const { Pool } = require("pg");
 
 // Create connection pool
