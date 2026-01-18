@@ -1,5 +1,9 @@
 console.log("CurveLink Command Center loaded");
 
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? ''
+  : 'https://f50c3599-a652-4a6d-85e5-b28d4c6b6b42-00-2e9y10qe3rmg8.riker.replit.dev';
+
 let pendingBroadcastMessage = null;
 let pendingReportId = null;
 
@@ -40,9 +44,9 @@ function closeModal(modalId) {
 async function loadDashboardStats() {
   try {
     const [subsRes, reportsRes, alertsRes] = await Promise.all([
-      fetch("/subscribers"),
-      fetch("/reports"),
-      fetch("/alerts")
+      fetch(`${API_BASE}/subscribers`),
+      fetch(`${API_BASE}/reports`),
+      fetch(`${API_BASE}/alerts`)
     ]);
     
     const subscribers = (await subsRes.json()).subscribers || [];
@@ -69,7 +73,7 @@ function updateInboxBadge(count) {
 
 async function loadSubscribers() {
   try {
-    const response = await fetch("/subscribers");
+    const response = await fetch(`${API_BASE}/subscribers`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     const subscribers = Array.isArray(data.subscribers) ? data.subscribers : [];
@@ -107,7 +111,7 @@ function renderSubscribersTable(subscribers) {
 
 async function loadAlerts() {
   try {
-    const response = await fetch("/alerts");
+    const response = await fetch(`${API_BASE}/alerts`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     const messages = Array.isArray(data.messages) ? data.messages : [];
@@ -146,7 +150,7 @@ function renderAlertsTable(messages) {
 
 async function loadReports() {
   try {
-    const response = await fetch("/reports");
+    const response = await fetch(`${API_BASE}/reports`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     const reports = Array.isArray(data.reports) ? data.reports : [];
@@ -218,7 +222,7 @@ async function confirmBroadcast() {
   }
   
   try {
-    const response = await fetch("/admin/broadcast", {
+    const response = await fetch(`${API_BASE}/admin/broadcast`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -257,7 +261,7 @@ async function dismissReport(reportId) {
   if (!password) return;
   
   try {
-    const response = await fetch(`/reports/${reportId}/dismiss`, {
+    const response = await fetch(`${API_BASE}/reports/${reportId}/dismiss`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ adminPassword: password })

@@ -26,9 +26,15 @@ app.use(helmet()); // Security headers
 app.use(cors({
     origin: process.env.CORS_ORIGIN
         ? process.env.CORS_ORIGIN.split(',')
-        : ["http://127.0.0.1:5500", "http://localhost:3000", "http://127.0.0.1:3000"],
+        : [
+            "https://curvelinx.netlify.app",
+            "https://f50c3599-a652-4a6d-85e5-b28d4c6b6b42-00-2e9y10qe3rmg8.riker.replit.dev",
+            "http://localhost:5000",
+            "http://127.0.0.1:5000"
+          ],
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization", "x-api-key"]
+    allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+    credentials: true
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
