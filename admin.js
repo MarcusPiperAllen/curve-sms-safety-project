@@ -7,6 +7,36 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
 let pendingBroadcastMessage = null;
 let pendingReportId = null;
 
+// Toast notification system
+function showToast(message, type = 'success') {
+  const existing = document.querySelector('.toast-notification');
+  if (existing) existing.remove();
+  
+  const toast = document.createElement('div');
+  toast.className = `toast-notification toast-${type}`;
+  toast.innerHTML = `
+    <span>${message}</span>
+    <button onclick="this.parentElement.remove()">&times;</button>
+  `;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => toast.remove(), 5000);
+}
+
+// Loading state helper
+function setButtonLoading(button, loading) {
+  if (loading) {
+    button.dataset.originalText = button.textContent;
+    button.textContent = 'Processing...';
+    button.disabled = true;
+    button.style.opacity = '0.7';
+  } else {
+    button.textContent = button.dataset.originalText || button.textContent;
+    button.disabled = false;
+    button.style.opacity = '1';
+  }
+}
+
 function showSection(sectionId) {
   const section = document.getElementById(sectionId);
   if (!section) {
@@ -190,7 +220,7 @@ function renderReportsList(reports) {
         <button class="btn-primary" onclick="approveAndBroadcast(${report.id}, '${escapeHtml(report.issue).replace(/'/g, "\\'")}')">
           Approve & Send to All
         </button>
-        <button class="btn-secondary" onclick="dismissReport(${report.id})">
+        <button class="btn-secondary" onclick="dismissReport(${report.id}, this)">
           Dismiss
         </button>
       </div>
@@ -214,12 +244,15 @@ function approveAndBroadcast(reportId, issue) {
 async function confirmBroadcast() {
   const password = document.getElementById("adminPasswordInput").value;
   const errorEl = document.getElementById("passwordError");
+  const confirmBtn = document.getElementById("confirmBroadcastBtn");
   
   if (!password) {
     errorEl.textContent = "Please enter your admin password.";
     errorEl.classList.remove("hidden");
     return;
   }
+  
+  setButtonLoading(confirmBtn, true);
   
   try {
     const response = await fetch(`${API_BASE}/admin/broadcast`, {
@@ -240,25 +273,30 @@ async function confirmBroadcast() {
       if (response.status === 401) {
         errorEl.textContent = "Invalid password. Please try again.";
         errorEl.classList.remove("hidden");
+        setButtonLoading(confirmBtn, false);
         return;
       }
       throw new Error(result.error || "Broadcast failed");
     }
     
     closeModal("passwordModal");
-    alert(`Broadcast sent to ${result.totalRecipients} residents.`);
+    showToast(`Broadcast sent successfully to ${result.totalRecipients} resident(s)!`, 'success');
     loadReports();
     loadDashboardStats();
   } catch (err) {
     console.error("Broadcast failed:", err);
     errorEl.textContent = err.message || "Broadcast failed. Please try again.";
     errorEl.classList.remove("hidden");
+  } finally {
+    setButtonLoading(confirmBtn, false);
   }
 }
 
-async function dismissReport(reportId) {
+async function dismissReport(reportId, buttonEl) {
   const password = prompt("Enter admin password to dismiss this report:");
   if (!password) return;
+  
+  if (buttonEl) setButtonLoading(buttonEl, true);
   
   try {
     const response = await fetch(`${API_BASE}/reports/${reportId}/dismiss`, {
@@ -268,17 +306,20 @@ async function dismissReport(reportId) {
     });
     
     if (response.status === 401) {
-      alert("Invalid admin password.");
+      showToast("Invalid admin password.", 'error');
+      if (buttonEl) setButtonLoading(buttonEl, false);
       return;
     }
     
     if (!response.ok) throw new Error("Failed to dismiss report");
     
+    showToast("Report dismissed successfully!", 'success');
     loadReports();
     loadDashboardStats();
   } catch (err) {
     console.error("Failed to dismiss report:", err);
-    alert("Failed to dismiss report. Please try again.");
+    showToast("Failed to dismiss report. Please try again.", 'error');
+    if (buttonEl) setButtonLoading(buttonEl, false);
   }
 }
 
