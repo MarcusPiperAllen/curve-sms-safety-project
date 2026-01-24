@@ -206,6 +206,8 @@ function renderReportsList(reports) {
   pendingReports.forEach(report => {
     const card = document.createElement("div");
     card.className = "report-card";
+    card.dataset.reportId = report.id;
+    card.dataset.reportIssue = report.issue;
     const time = report.created_at ? new Date(report.created_at).toLocaleString() : "N/A";
     card.innerHTML = `
       <div class="report-content">
@@ -217,14 +219,25 @@ function renderReportsList(reports) {
         <div class="report-time">Reported: ${time}</div>
       </div>
       <div class="report-actions">
-        <button class="btn-primary" onclick="approveAndBroadcast(${report.id}, '${escapeHtml(report.issue).replace(/'/g, "\\'")}')">
-          Approve & Send to All
-        </button>
-        <button class="btn-secondary" onclick="dismissReport(${report.id}, this)">
-          Dismiss
-        </button>
+        <button class="btn-primary btn-approve">Approve & Send to All</button>
+        <button class="btn-secondary btn-dismiss">Dismiss</button>
       </div>
     `;
+    
+    // Attach event listeners directly
+    const approveBtn = card.querySelector('.btn-approve');
+    const dismissBtn = card.querySelector('.btn-dismiss');
+    
+    approveBtn.addEventListener('click', function() {
+      console.log("Approve button clicked for report:", report.id);
+      handleApprove(report.id, report.issue);
+    });
+    
+    dismissBtn.addEventListener('click', function() {
+      console.log("Dismiss button clicked for report:", report.id);
+      handleDismiss(report.id, this);
+    });
+    
     container.appendChild(card);
   });
 }
@@ -235,12 +248,18 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-window.approveAndBroadcast = function(reportId, issue) {
-  console.log("approveAndBroadcast called:", reportId, issue);
+function handleApprove(reportId, issue) {
+  console.log("handleApprove called:", reportId, issue);
   pendingBroadcastMessage = `ALERT: ${issue}`;
   pendingReportId = reportId;
-  showModal("passwordModal");
-};
+  const modal = document.getElementById("passwordModal");
+  if (modal) {
+    modal.classList.remove("hidden");
+    console.log("Password modal shown");
+  } else {
+    console.error("Password modal not found!");
+  }
+}
 
 async function confirmBroadcast() {
   const password = document.getElementById("adminPasswordInput").value;
@@ -293,8 +312,8 @@ async function confirmBroadcast() {
   }
 }
 
-window.dismissReport = async function(reportId, buttonEl) {
-  console.log("dismissReport called:", reportId);
+async function handleDismiss(reportId, buttonEl) {
+  console.log("handleDismiss called:", reportId);
   const password = prompt("Enter admin password to dismiss this report:");
   if (!password) return;
   
@@ -323,7 +342,7 @@ window.dismissReport = async function(reportId, buttonEl) {
     showToast("Failed to dismiss report. Please try again.", 'error');
     if (buttonEl) setButtonLoading(buttonEl, false);
   }
-};
+}
 
 function showNewAlertModal() {
   showModal("newAlertModal");
