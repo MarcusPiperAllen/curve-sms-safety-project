@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CurveLink – Report an Issue</title>
+  <meta name="description" content="Report safety issues and emergencies to your building management. Verified residents only.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0f;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #ffffff;
+    }
+    
+    .container {
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+    
+    .bolt-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 40px rgba(34, 197, 94, 0.3);
+    }
+    
+    .bolt-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: white;
+      fill: none;
+    }
+    
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .tagline {
+      color: #71717a;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 32px;
+    }
+    
+    .card {
+      background: linear-gradient(145deg, #18181b 0%, #1f1f23 100%);
+      border: 1px solid #27272a;
+      border-radius: 20px;
+      padding: 32px 28px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fafafa;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      color: #a1a1aa;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    input[type="tel"],
+    textarea {
+      width: 100%;
+      padding: 16px 20px;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      background: #09090b;
+      color: #fafafa;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+    
+    input[type="tel"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+    }
+    
+    input[type="tel"]::placeholder,
+    textarea::placeholder {
+      color: #52525b;
+    }
+    
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    button[type="submit"] {
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+    }
+    
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(34, 197, 94, 0.4);
+    }
+    
+    button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .message {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: none;
+    }
+    
+    .message.success {
+      display: block;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+    }
+    
+    .message.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+    
+    .back-link {
+      margin-top: 24px;
+    }
+    
+    .back-link a {
+      color: #71717a;
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    
+    .back-link a:hover {
+      color: #22c55e;
+    }
+    
+    .powered-by {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 8px;
+      padding-top: 24px;
+      border-top: 1px solid #1f1f23;
+    }
+    
+    .powered-by span {
+      font-size: 0.75rem;
+      color: #52525b;
+    }
+    
+    .powered-by strong {
+      color: #22c55e;
+    }
+    
+    .gables-badge {
+      font-size: 0.65rem;
+      padding: 4px 8px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      border-radius: 20px;
+      color: #22c55e;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    
+    .info-text {
+      font-size: 0.8rem;
+      color: #71717a;
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="bolt-icon">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </svg>
+    </div>
+    
+    <h1>Report an Issue</h1>
+    <p class="tagline">Alert your building management instantly</p>
+    
+    <div class="card">
+      <h2 class="card-title">Submit Safety Report</h2>
+      <form id="reportForm">
+        <div class="form-group">
+          <label class="form-label" for="phone">Your Phone Number</label>
+          <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="issue">Describe the Issue</label>
+          <textarea id="issue" name="issue" placeholder="Describe the safety issue or emergency..." required></textarea>
+        </div>
+        
+        <button type="submit" id="submitBtn">Submit Report</button>
+      </form>
+      
+      <div class="message" id="reportStatus"></div>
+      
+      <p class="info-text">
+        Reports are reviewed by building management and may trigger an alert to all residents if urgent.
+      </p>
+    </div>
+    
+    <div class="back-link">
+      <a href="/">&larr; Back to Home</a>
+    </div>
+    
+    <div class="powered-by">
+      <span>Powered by <strong>CurveLink</strong></span>
+      <div class="gables-badge">Gables Residential</div>
+    </div>
+  </div>
+
+  <script src="report.js" defer></script>
+</body>
+</html>

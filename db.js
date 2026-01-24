@@ -38,6 +38,12 @@ async function removeSubscriber(phone) {
   return result.rows[0];
 }
 
+async function isSubscriber(phone) {
+  const query = "SELECT * FROM subscribers WHERE phone = $1 AND status = 'active'";
+  const result = await pool.query(query, [phone]);
+  return result.rows.length > 0;
+}
+
 // ============ MESSAGE FUNCTIONS ============
 
 async function addMessage(body) {
@@ -101,6 +107,7 @@ module.exports = {
   addSubscriber,
   getSubscribers,
   removeSubscriber,
+  isSubscriber,
   addMessage,
   linkMessageToRecipient,
   getMessages,

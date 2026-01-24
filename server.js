@@ -11,6 +11,7 @@ const {
   addSubscriber,
   getSubscribers,
   removeSubscriber,
+  isSubscriber,
   addMessage,
   linkMessageToRecipient,
   getMessages,
@@ -221,6 +222,15 @@ app.post("/api/subscribe", async (req, res) => {
     try {
         await addSubscriber(normalizedPhone);
         console.log(`✅ New subscriber via web form: ${normalizedPhone}`);
+        
+        // Send enhanced welcome SMS
+        // Use PUBLIC_BASE_URL if set, otherwise use Netlify production URL
+        const baseUrl = process.env.PUBLIC_BASE_URL || 'https://curvelinx.netlify.app';
+        const reportUrl = `${baseUrl}/report.html`;
+        const welcomeMessage = `Welcome to CurveLinx! You are now part of the Gables Residential Safety Network. Save this contact. To report an emergency or safety issue, visit: ${reportUrl}`;
+        await sendSMS(normalizedPhone, welcomeMessage);
+        console.log(`📱 Welcome SMS sent to: ${normalizedPhone}`);
+        
         res.json({ success: true, message: "You're now subscribed to CurveLink!" });
     } catch (err) {
         console.error("❌ Subscription error:", err);
@@ -228,7 +238,44 @@ app.post("/api/subscribe", async (req, res) => {
     }
 });
 
-// 10. Password-Protected Admin Broadcast Endpoint
+// 10. Resident Report Endpoint (Verified Subscribers Only)
+app.post("/api/report", async (req, res) => {
+    const { phone, issue } = req.body;
+    
+    if (!phone || !issue) {
+        return res.status(400).json({ success: false, message: "Phone number and issue description are required." });
+    }
+    
+    const normalizedPhone = phone.trim();
+    const normalizedIssue = issue.trim();
+    
+    if (normalizedIssue.length < 5) {
+        return res.status(400).json({ success: false, message: "Please provide more detail about the issue." });
+    }
+    
+    try {
+        // Verify the phone is a registered subscriber
+        const isVerified = await isSubscriber(normalizedPhone);
+        
+        if (!isVerified) {
+            return res.status(403).json({ 
+                success: false, 
+                message: "Number not recognized. Please sign up first." 
+            });
+        }
+        
+        // Add the report to the database
+        await addReport(normalizedPhone, normalizedIssue);
+        console.log(`📋 Web report submitted from ${normalizedPhone}: ${normalizedIssue}`);
+        
+        res.json({ success: true, message: "Report submitted successfully!" });
+    } catch (err) {
+        console.error("❌ Report submission error:", err);
+        res.status(500).json({ success: false, message: "Failed to submit report. Please try again." });
+    }
+});
+
+// 11. Password-Protected Admin Broadcast Endpoint
 app.post("/admin/broadcast", async (req, res) => {
     const { message, reportId, adminPassword } = req.body;
     
