@@ -235,11 +235,12 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-function approveAndBroadcast(reportId, issue) {
+window.approveAndBroadcast = function(reportId, issue) {
+  console.log("approveAndBroadcast called:", reportId, issue);
   pendingBroadcastMessage = `ALERT: ${issue}`;
   pendingReportId = reportId;
   showModal("passwordModal");
-}
+};
 
 async function confirmBroadcast() {
   const password = document.getElementById("adminPasswordInput").value;
@@ -292,7 +293,8 @@ async function confirmBroadcast() {
   }
 }
 
-async function dismissReport(reportId, buttonEl) {
+window.dismissReport = async function(reportId, buttonEl) {
+  console.log("dismissReport called:", reportId);
   const password = prompt("Enter admin password to dismiss this report:");
   if (!password) return;
   
@@ -321,7 +323,7 @@ async function dismissReport(reportId, buttonEl) {
     showToast("Failed to dismiss report. Please try again.", 'error');
     if (buttonEl) setButtonLoading(buttonEl, false);
   }
-}
+};
 
 function showNewAlertModal() {
   showModal("newAlertModal");
