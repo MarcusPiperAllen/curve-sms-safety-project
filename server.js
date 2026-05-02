@@ -80,15 +80,28 @@ if (!process.env.ADMIN_PASSWORD) {
     console.warn("⚠️ ADMIN_PASSWORD is missing. Admin broadcast feature will not work.");
 }
 
-// 4. Subscription Helpers
+// 4. Phone normalization — ensures all numbers stored as E.164 (+12223334444)
+function normalizePhone(raw) {
+    if (!raw) return null;
+    const digits = raw.toString().replace(/\D/g, ''); // strip everything except digits
+    if (digits.length === 10) return '+1' + digits;       // 2103922392 → +12103922392
+    if (digits.length === 11 && digits.startsWith('1')) return '+' + digits; // 12103922392 → +12103922392
+    if (raw.startsWith('+') && digits.length >= 10) return '+' + digits;     // already E.164
+    return '+1' + digits; // fallback
+}
+
+// Subscription Helpers
 async function markUserSubscribed(phone) {
-    await addSubscriber(phone);
-    console.log(`✅ User subscribed: ${phone}`);
+    const normalized = normalizePhone(phone);
+    await addSubscriber(normalized);
+    console.log(`✅ User subscribed: ${normalized}`);
+    return normalized;
 }
 
 async function markUserOptedOut(phone) {
-    await removeSubscriber(phone);
-    console.log(`✅ User opted out: ${phone}`);
+    const normalized = normalizePhone(phone);
+    await removeSubscriber(normalized);
+    console.log(`✅ User opted out: ${normalized}`);
 }
 
 // 5. SMS Webhook (Handles Incoming Texts from Twilio)
@@ -245,7 +258,7 @@ app.post("/api/subscribe", async (req, res) => {
         return res.status(400).json({ success: false, message: "Phone number is required." });
     }
 
-    const normalizedPhone = phone.trim();
+    const normalizedPhone = normalizePhone(phone.trim());
 
     try {
         await addSubscriber(normalizedPhone);
@@ -274,7 +287,7 @@ app.post("/api/report", async (req, res) => {
         return res.status(400).json({ success: false, message: "Phone number and issue description are required." });
     }
     
-    const normalizedPhone = phone.trim();
+    const normalizedPhone = normalizePhone(phone.trim());
     const normalizedIssue = issue.trim();
     
     if (normalizedIssue.length < 5) {
