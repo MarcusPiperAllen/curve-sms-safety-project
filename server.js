@@ -48,7 +48,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: false, // set true if serving over HTTPS only
+        secure: process.env.NODE_ENV === 'production', // HTTPS-only in production
         maxAge: 8 * 60 * 60 * 1000 // 8 hours
     }
 }));
@@ -254,7 +254,7 @@ app.post("/api/subscribe", async (req, res) => {
         // Send enhanced welcome SMS
         // Use PUBLIC_BASE_URL if set, otherwise use Netlify production URL
         const baseUrl = process.env.PUBLIC_BASE_URL || 'https://curvelinx.netlify.app';
-        const reportUrl = `${baseUrl}/report.html`;
+        const reportUrl = `${baseUrl}/report`;
         const welcomeMessage = `Welcome to CurveLinx! You are now part of the Gables Residential Safety Network. Save this contact. To report an emergency or safety issue, visit: ${reportUrl}`;
         await sendSMS(normalizedPhone, welcomeMessage);
         console.log(`📱 Welcome SMS sent to: ${normalizedPhone}`);
