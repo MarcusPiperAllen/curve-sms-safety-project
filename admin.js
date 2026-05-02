@@ -1,8 +1,6 @@
 console.log("CurveLink Command Center loaded");
 
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? ''
-  : 'https://f50c3599-a652-4a6d-85e5-b28d4c6b6b42-00-2e9y10qe3rmg8.riker.replit.dev';
+const API_BASE = '';
 
 let pendingBroadcastMessage = null;
 let pendingReportId = null;

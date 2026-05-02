@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
       statusDiv.style.color = "#d9534f";
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = "Opt In";
+      submitBtn.textContent = "Activate Alerts";
     }
   });
 });

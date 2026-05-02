@@ -371,8 +371,11 @@ app.get("/admin", (req, res) => {
     res.sendFile(path.join(__dirname, "admin.html"));
 });
 
-// 12. Health Check Route
-app.get("/", (_req, res) => res.send("✅ CurveLink Server is running."));
+// Serve landing page at root
+app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "index.html")));
+
+// Serve report page
+app.get("/report", (_req, res) => res.sendFile(path.join(__dirname, "report.html")));
 
 // 13. Global Error Handler
 app.use((err, _req, res, _next) => {
