@@ -10,9 +10,11 @@ A smart community notification platform built with Node.js and Express that allo
 - `index.html` - Public subscription landing page (modern startup design with Inter font)
 - `report.html` - Resident report submission page (dark mode, lightning bolt theme)
 - `report.js` - Report page frontend logic with subscriber verification
-- `admin.html` - Admin dashboard for managing alerts
+- `admin.html` - Admin dashboard for managing alerts (session-protected)
 - `admin.js` - Admin dashboard frontend logic
 - `admin.css` - Admin dashboard styles
+- `admin-login.html` - Admin login page (dark mode, matching dashboard aesthetic)
+- `admin-login.js` - Minimal login page script (error banner display)
 - `setup.sql` - Database schema for PostgreSQL
 
 ## Key Features
@@ -32,7 +34,8 @@ The following environment variables are required for full functionality:
 - `TWILIO_AUTH_TOKEN` - Twilio Auth Token
 - `TWILIO_PHONE_NUMBER` - Your Twilio phone number
 - `BROADCAST_API_KEY` - API key for broadcast endpoint authentication
-- `ADMIN_PASSWORD` - Password required to authorize broadcasts and dismiss reports
+- `ADMIN_PASSWORD` - Password required to log in to admin dashboard and authorize broadcasts/reports
+- `SESSION_SECRET` - Secret for express-session cookie signing
 
 ### Automatically Configured
 - `DATABASE_URL` - PostgreSQL connection string (provided by Replit)
@@ -53,10 +56,14 @@ The following environment variables are required for full functionality:
 - `GET /subscribers` - List all active subscribers
 - `GET /alerts` - List all sent alerts
 - `GET /reports` - List all resident-reported issues
-- `GET /admin` - Admin Command Center
+- `GET /admin` - Admin Command Center (requires session auth, redirects to login if not authenticated)
+- `GET /admin/login` - Admin login page
+- `POST /admin/login` - Admin login form submission (password verified server-side only)
+- `GET /admin/logout` - Destroys session and redirects to login
 - `GET /report.html` - Resident report submission page
 
 ## Recent Changes
+- May 2, 2026: Added session-based password protection to /admin dashboard using express-session; created admin-login.html with matching dark mode design; added Logout button to admin header; direct /admin.html access redirected through protected /admin route
 - January 24, 2026: Added Auto-Welcome SMS on subscription with report page URL
 - January 24, 2026: Created report.html/report.js - web-based report submission for verified subscribers
 - January 24, 2026: Added /api/report endpoint with subscriber verification

@@ -1,6 +1,7 @@
 // 1. Load environment variables
 require("dotenv").config();
 const express = require("express");
+const session = require("express-session");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
@@ -39,6 +40,33 @@ app.use(cors({
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
+
+// Session middleware — uses SESSION_SECRET from Replit Secrets
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'curvelink-fallback-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: false, // set true if serving over HTTPS only
+        maxAge: 8 * 60 * 60 * 1000 // 8 hours
+    }
+}));
+
+// Middleware: protect all /admin routes
+function requireAdminAuth(req, res, next) {
+    if (req.session && req.session.adminAuthenticated) {
+        return next();
+    }
+    res.redirect('/admin/login');
+}
+
+// Block direct access to admin.html before static middleware can serve it
+app.use((req, res, next) => {
+    if (req.path === '/admin.html') return res.redirect('/admin');
+    next();
+});
+
 app.use(express.static(__dirname)); // Serve static files
 
 // 3. Verify Environment Variables
@@ -366,10 +394,38 @@ app.post("/dev/subscribe", async (req, res) => {
     }
 });
 
-// 13. Convenience route for admin dashboard
-app.get("/admin", (req, res) => {
+// Admin login — GET: show login page (redirect to /admin if already authenticated)
+app.get("/admin/login", (req, res) => {
+    if (req.session && req.session.adminAuthenticated) {
+        return res.redirect('/admin');
+    }
+    res.sendFile(path.join(__dirname, "admin-login.html"));
+});
+
+// Admin login — POST: verify password server-side only, never expose to frontend
+app.post("/admin/login", (req, res) => {
+    const { password } = req.body;
+    if (password && password === process.env.ADMIN_PASSWORD) {
+        req.session.adminAuthenticated = true;
+        return res.redirect('/admin');
+    }
+    return res.redirect('/admin/login?error=1');
+});
+
+// Admin logout — destroy session and redirect to login
+app.get("/admin/logout", (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/admin/login');
+    });
+});
+
+// Admin dashboard — protected by requireAdminAuth middleware
+app.get("/admin", requireAdminAuth, (req, res) => {
     res.sendFile(path.join(__dirname, "admin.html"));
 });
+
+// Block direct file access to admin.html — route through protected /admin instead
+app.get("/admin.html", (req, res) => res.redirect('/admin'));
 
 // Serve landing page at root
 app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "index.html")));

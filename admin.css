@@ -84,6 +84,26 @@ header h1 {
   color: #22c55e;
 }
 
+.logout-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #a1a1aa;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.logout-link:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
 .status-badge {
   display: flex;
   align-items: center;
