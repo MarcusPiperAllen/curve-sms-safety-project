@@ -40,4 +40,3 @@ run = ["node", "server.js"]
 [userenv]
 
 [userenv.development]
-NODE_ENV = "development"
