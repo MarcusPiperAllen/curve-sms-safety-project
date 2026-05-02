@@ -1,0 +1,151 @@
+Perfect. You’re at the final wiring step. I’m going to make this dead simple so you don’t touch the wrong thing.
+
+⸻
+
+🔑 Your LIVE app URLs (these are correct)
+
+Use these EXACTLY:
+
+* Signup page (QR code goes here)
+    👉 https://curve-link.replit.app/
+* Admin login
+    👉 https://curve-link.replit.app/admin/login
+* Admin dashboard (after login)
+    👉 https://curve-link.replit.app/admin
+* Report page (for residents)
+    👉 https://curve-link.replit.app/report
+* Twilio webhook (MOST IMPORTANT)
+    👉 https://curve-link.replit.app/sms
+
+⸻
+
+⚙️ What to change in Twilio (ONLY THIS SECTION)
+
+You showed me the right screen already.
+
+Go to:
+
+👉 Phone Number → Messaging Configuration
+
+Find this section:
+
+“A message comes in”
+
+⸻
+
+🔧 Set it EXACTLY like this:
+
+Configure with:
+
+* Webhook ✅
+
+URL:
+
+https://curve-link.replit.app/sms
+
+Method:
+
+HTTP POST
+
+⸻
+
+❌ DO NOT TOUCH:
+
+* Voice settings
+* Call settings
+* Other URLs
+* Regional routing
+
+Leave everything else alone.
+
+⸻
+
+🧠 What this actually does
+
+This connects:
+
+📱 Someone texts your number
+→ Twilio sends that message to
+→ your app (/sms)
+→ your app saves it
+→ admin dashboard shows it
+
+⸻
+
+🔐 One more IMPORTANT step (Replit)
+
+Go to Replit → Secrets
+
+Add or update:
+
+PUBLIC_BASE_URL = https://curve-link.replit.app
+
+This makes your welcome SMS link correctly.
+
+⸻
+
+🧪 FINAL TEST (you MUST do this)
+
+From your phone:
+
+Test 1 — Signup
+
+* Enter your number on:
+    👉 https://curve-link.replit.app/
+* You should get a welcome text
+
+⸻
+
+Test 2 — Incoming SMS
+
+Text your Twilio number:
+
+REPORT suspicious person near entrance
+
+⸻
+
+Test 3 — Admin check
+
+Go to:
+👉 https://curve-link.replit.app/admin
+
+Look for:
+
+* Message appears in Safety Inbox
+
+⸻
+
+🚨 If it DOESN’T show up
+
+Then we check:
+
+* Twilio logs (again)
+* or /sms route
+
+But 90% chance this works once webhook is set.
+
+⸻
+
+🎯 Where you are now
+
+You are no longer “building”
+
+You are:
+
+Deploying a real system
+
+⸻
+
+💬 Quick confirmation
+
+After you:
+
+1. Set webhook
+2. Save
+3. Send test text
+
+Tell me:
+
+👉 “message showed up” or “didn’t show”
+
+I’ll take you the rest of the way.

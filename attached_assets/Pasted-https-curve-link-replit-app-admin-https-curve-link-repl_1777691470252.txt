@@ -1,0 +1,43 @@
+https://curve-link.replit.app/admin
+
+https://curve-link.replit.app/
+
+Let me read server.js to confirm every route precisely before publishing.
+I have the full picture. Before publishing, I need to fix two things for production: the session cookie needs to use secure mode over HTTPS, and the PUBLIC_BASE_URL in the welcome SMS needs to point to the new Replit domain instead of the old Netlify URL. Let me fix those now, then publish.
+Now fix the welcome SMS to use /report (the clean route) instead of /report.html:
+Good. Now restart to confirm the server starts cleanly with those changes, then publish:
+Server is clean. Here are your answers, then I'll kick off publishing.
+
+Your confirmed URLs (replace [domain] with the .replit.app URL you're about to get):
+
+#	What	URL
+1	Public signup page	https://[domain]/
+2	Admin login	https://[domain]/admin/login
+3	Resident report page	https://[domain]/report
+4	Twilio inbound SMS webhook	https://[domain]/sms
+5. Does /sms accept POST? Yes — it is defined as app.post("/sms", ...). Twilio must send HTTP POST.
+
+6. Are incoming texts saved to the database and visible in the admin? Yes — fully wired:
+
+START → saves subscriber to subscribers table, appears in Residents tab
+REPORT [text] → saves to reports table, appears in Safety Inbox tab
+STOP → removes the subscriber
+7. Exact URL to paste in Twilio's "A message comes in" webhook field:
+
+https://[domain]/sms
+Set the method to HTTP POST. That's the only field you need to change on that Twilio page.
+
+One post-publish step: Once you have your .replit.app domain, go to Replit Secrets and set PUBLIC_BASE_URL to https://[your-domain].replit.app. This makes the welcome SMS link to the correct report page URL.
+
+Publishing now:
+Click Publish in the dialog above. Once it completes and gives you your .replit.app domain:
+
+Twilio console → paste https://[your-domain].replit.app/sms into the "A message comes in" webhook URL → set to HTTP POST → Save
+Replit Secrets → add PUBLIC_BASE_URL = https://[your-domain].replit.app (so welcome texts link to the right page)
+That's it — all other secrets (Twilio credentials, ADMIN_PASSWORD, SESSION_SECRET) are already set and carry over to production automatically
+Republish
+Marcus published 8 minutes ago
+Visibility:
+Public
+
+Break it down for me so I can fill out those pages with the right urls  and what not
