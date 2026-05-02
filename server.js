@@ -102,7 +102,7 @@ app.post("/sms", async (req, res) => {
             twiml.message("Message cannot be empty. Reply START to subscribe, REPORT <...>, or STOP.");
         } else if (body === "START") {
             await markUserSubscribed(from);
-            twiml.message("CurveLink: You're now subscribed. Reply STOP to opt out, HELP for help.");
+            twiml.message("CurveLink: You're now subscribed to Gables Residential alerts! Save this number.\n\nTo report an issue, reply:\nREPORT [your message]\n\nExample: REPORT suspicious person near lobby\n\nReply STOP to unsubscribe.");
             console.log(`User ${from} subscribed.`);
         } else if (body.startsWith("REPORT ")) {
             const issue = req.body.Body?.trim().slice(7);
@@ -255,7 +255,7 @@ app.post("/api/subscribe", async (req, res) => {
         // Use PUBLIC_BASE_URL if set, otherwise use Netlify production URL
         const baseUrl = process.env.PUBLIC_BASE_URL || 'https://curvelinx.netlify.app';
         const reportUrl = `${baseUrl}/report`;
-        const welcomeMessage = `Welcome to CurveLinx! You are now part of the Gables Residential Safety Network. Save this contact. To report an emergency or safety issue, visit: ${reportUrl}`;
+        const welcomeMessage = `Welcome to CurveLink! You're now connected to Gables Residential alerts. Save this number.\n\nTo report an issue, text:\nREPORT [your message]\n\nExample: REPORT water leak in lobby\n\nOr report online: ${reportUrl}\n\nReply STOP to unsubscribe.`;
         await sendSMS(normalizedPhone, welcomeMessage);
         console.log(`📱 Welcome SMS sent to: ${normalizedPhone}`);
         

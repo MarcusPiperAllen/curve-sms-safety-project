@@ -182,9 +182,9 @@
 
   <div id="passwordModal" class="modal hidden">
     <div class="modal-content">
-      <h3>Admin Authentication</h3>
-      <p class="modal-desc">Enter your admin password to authorize this broadcast.</p>
-      <input type="password" id="adminPasswordInput" placeholder="Admin password" />
+      <h3 id="modalTitle">Admin Authentication</h3>
+      <p class="modal-desc" id="modalDesc">Enter your admin password to authorize this broadcast.</p>
+      <input type="password" id="adminPasswordInput" placeholder="Admin password" autocomplete="current-password" />
       <div id="passwordError" class="error-text hidden">Invalid password. Please try again.</div>
       <div class="modal-actions">
         <button id="confirmBroadcastBtn" class="btn-primary">Authorize & Send</button>

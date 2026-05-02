@@ -535,6 +535,77 @@ button {
   font-size: 0.9rem;
 }
 
+/* Handled report cards (dimmed) */
+.report-card-handled {
+  opacity: 0.6;
+  border-color: #1f1f23;
+}
+
+.report-card-handled:hover { opacity: 0.8; }
+
+/* Status badge on handled reports */
+.report-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.status-approved {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.status-dismissed {
+  background: rgba(113, 113, 122, 0.12);
+  color: #71717a;
+  border: 1px solid rgba(113, 113, 122, 0.25);
+}
+
+/* Report history section */
+.reports-history {
+  margin-top: 24px;
+  border-top: 1px solid #1f1f23;
+  padding-top: 16px;
+}
+
+.history-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 10px 14px;
+  background: #111114;
+  border: 1px solid #1f1f23;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #71717a;
+  user-select: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.history-toggle:hover {
+  background: #18181b;
+  color: #a1a1aa;
+}
+
+.history-toggle svg {
+  transition: transform 0.2s;
+}
+
+.history-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.history-list.hidden { display: none; }
+
 .settings-form {
   max-width: 400px;
 }

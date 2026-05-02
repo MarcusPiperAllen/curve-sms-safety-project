@@ -4,6 +4,8 @@ const API_BASE = '';
 
 let pendingBroadcastMessage = null;
 let pendingReportId = null;
+let pendingAction = null; // 'broadcast' or 'dismiss'
+let pendingDismissId = null;
 
 // Toast notification system
 function showToast(message, type = 'success') {
@@ -62,6 +64,12 @@ function closeModal(modalId) {
     document.getElementById("passwordError").classList.add("hidden");
     pendingBroadcastMessage = null;
     pendingReportId = null;
+    pendingAction = null;
+    pendingDismissId = null;
+    // Reset modal text to broadcast defaults
+    document.getElementById("modalTitle").textContent = "Admin Authentication";
+    document.getElementById("modalDesc").textContent = "Enter your admin password to authorize this broadcast.";
+    document.getElementById("confirmBroadcastBtn").textContent = "Authorize & Send";
   }
   if (modalId === "newAlertModal") {
     document.getElementById("alertMessage").value = "";
@@ -195,49 +203,86 @@ function renderReportsList(reports) {
   container.innerHTML = "";
 
   const pendingReports = reports.filter(r => r.status === "pending");
-  
+  const handledReports = reports.filter(r => r.status !== "pending");
+
+  // Render pending reports
   if (pendingReports.length === 0) {
-    container.innerHTML = `<div class="empty-state">No pending reports. Your community is all clear!</div>`;
-    return;
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "No pending reports. Your community is all clear!";
+    container.appendChild(empty);
+  } else {
+    pendingReports.forEach(report => {
+      container.appendChild(buildReportCard(report, true));
+    });
   }
 
-  pendingReports.forEach(report => {
-    const card = document.createElement("div");
-    card.className = "report-card";
-    card.dataset.reportId = report.id;
-    card.dataset.reportIssue = report.issue;
-    const time = report.created_at ? new Date(report.created_at).toLocaleString() : "N/A";
-    card.innerHTML = `
-      <div class="report-content">
-        <div class="report-phone">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          ${report.phone}
-        </div>
-        <div class="report-issue">${escapeHtml(report.issue)}</div>
-        <div class="report-time">Reported: ${time}</div>
-      </div>
-      <div class="report-actions">
-        <button class="btn-primary btn-approve">Approve & Send to All</button>
-        <button class="btn-secondary btn-dismiss">Dismiss</button>
-      </div>
+  // Render handled report history
+  if (handledReports.length > 0) {
+    const historySection = document.createElement("div");
+    historySection.className = "reports-history";
+
+    const toggle = document.createElement("div");
+    toggle.className = "history-toggle";
+    toggle.innerHTML = `
+      <span>Report History (${handledReports.length})</span>
+      <svg id="historyChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
     `;
-    
-    // Attach event listeners directly
-    const approveBtn = card.querySelector('.btn-approve');
-    const dismissBtn = card.querySelector('.btn-dismiss');
-    
-    approveBtn.addEventListener('click', function() {
-      console.log("Approve button clicked for report:", report.id);
-      handleApprove(report.id, report.issue);
+
+    const historyList = document.createElement("div");
+    historyList.id = "historyList";
+    historyList.className = "history-list hidden";
+
+    handledReports.forEach(report => {
+      historyList.appendChild(buildReportCard(report, false));
     });
-    
-    dismissBtn.addEventListener('click', function() {
-      console.log("Dismiss button clicked for report:", report.id);
-      handleDismiss(report.id, this);
+
+    toggle.addEventListener("click", () => {
+      historyList.classList.toggle("hidden");
+      document.getElementById("historyChevron").style.transform =
+        historyList.classList.contains("hidden") ? "rotate(0deg)" : "rotate(180deg)";
     });
-    
-    container.appendChild(card);
-  });
+
+    historySection.appendChild(toggle);
+    historySection.appendChild(historyList);
+    container.appendChild(historySection);
+  }
+}
+
+function buildReportCard(report, isPending) {
+  const card = document.createElement("div");
+  card.className = "report-card" + (isPending ? "" : " report-card-handled");
+  card.dataset.reportId = report.id;
+
+  const time = report.created_at ? new Date(report.created_at).toLocaleString() : "N/A";
+  const statusLabel = report.status === "approved"
+    ? `<span class="report-status status-approved">Broadcasted</span>`
+    : `<span class="report-status status-dismissed">Dismissed</span>`;
+
+  card.innerHTML = `
+    <div class="report-content">
+      <div class="report-phone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 15a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 4.11h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 10.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        ${report.phone}
+      </div>
+      <div class="report-issue">${escapeHtml(report.issue)}</div>
+      <div class="report-time">Reported: ${time}</div>
+    </div>
+    <div class="report-actions">
+      ${isPending
+        ? `<button class="btn-primary btn-approve">Approve & Send to All</button>
+           <button class="btn-secondary btn-dismiss">Dismiss</button>`
+        : statusLabel
+      }
+    </div>
+  `;
+
+  if (isPending) {
+    card.querySelector('.btn-approve').addEventListener('click', () => handleApprove(report.id, report.issue));
+    card.querySelector('.btn-dismiss').addEventListener('click', function() { handleDismiss(report.id); });
+  }
+
+  return card;
 }
 
 function escapeHtml(text) {
@@ -247,98 +292,92 @@ function escapeHtml(text) {
 }
 
 function handleApprove(reportId, issue) {
-  console.log("handleApprove called:", reportId, issue);
+  pendingAction = 'broadcast';
   pendingBroadcastMessage = `ALERT: ${issue}`;
   pendingReportId = reportId;
-  const modal = document.getElementById("passwordModal");
-  if (modal) {
-    modal.classList.remove("hidden");
-    console.log("Password modal shown");
-  } else {
-    console.error("Password modal not found!");
-  }
+  document.getElementById("modalTitle").textContent = "Authorize Broadcast";
+  document.getElementById("modalDesc").textContent = `This will send an alert to all residents: "${pendingBroadcastMessage}"`;
+  document.getElementById("confirmBroadcastBtn").textContent = "Authorize & Send";
+  showModal("passwordModal");
+}
+
+function handleDismiss(reportId) {
+  pendingAction = 'dismiss';
+  pendingDismissId = reportId;
+  document.getElementById("modalTitle").textContent = "Confirm Dismiss";
+  document.getElementById("modalDesc").textContent = "Enter your admin password to dismiss this report. No alert will be sent.";
+  document.getElementById("confirmBroadcastBtn").textContent = "Confirm Dismiss";
+  showModal("passwordModal");
 }
 
 async function confirmBroadcast() {
   const password = document.getElementById("adminPasswordInput").value;
   const errorEl = document.getElementById("passwordError");
   const confirmBtn = document.getElementById("confirmBroadcastBtn");
-  
+
   if (!password) {
     errorEl.textContent = "Please enter your admin password.";
     errorEl.classList.remove("hidden");
     return;
   }
-  
+
   setButtonLoading(confirmBtn, true);
-  
+
   try {
-    const response = await fetch(`${API_BASE}/admin/broadcast`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: pendingBroadcastMessage,
-        reportId: pendingReportId,
-        adminPassword: password
-      })
-    });
-    
-    const result = await response.json();
-    
-    if (!response.ok) {
+    if (pendingAction === 'dismiss') {
+      // Dismiss flow
+      const response = await fetch(`${API_BASE}/reports/${pendingDismissId}/dismiss`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ adminPassword: password })
+      });
+
       if (response.status === 401) {
         errorEl.textContent = "Invalid password. Please try again.";
         errorEl.classList.remove("hidden");
         setButtonLoading(confirmBtn, false);
         return;
       }
-      throw new Error(result.error || "Broadcast failed");
+      if (!response.ok) throw new Error("Failed to dismiss report");
+
+      closeModal("passwordModal");
+      showToast("Report dismissed.", 'success');
+    } else {
+      // Broadcast flow
+      const response = await fetch(`${API_BASE}/admin/broadcast`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: pendingBroadcastMessage,
+          reportId: pendingReportId,
+          adminPassword: password
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          errorEl.textContent = "Invalid password. Please try again.";
+          errorEl.classList.remove("hidden");
+          setButtonLoading(confirmBtn, false);
+          return;
+        }
+        throw new Error(result.error || "Broadcast failed");
+      }
+
+      closeModal("passwordModal");
+      showToast(`Broadcast sent to ${result.totalRecipients} resident(s)!`, 'success');
     }
-    
-    closeModal("passwordModal");
-    showToast(`Broadcast sent successfully to ${result.totalRecipients} resident(s)!`, 'success');
+
     loadReports();
     loadDashboardStats();
   } catch (err) {
-    console.error("Broadcast failed:", err);
-    errorEl.textContent = err.message || "Broadcast failed. Please try again.";
+    console.error("Action failed:", err);
+    errorEl.textContent = err.message || "Action failed. Please try again.";
     errorEl.classList.remove("hidden");
   } finally {
     setButtonLoading(confirmBtn, false);
-  }
-}
-
-async function handleDismiss(reportId, buttonEl) {
-  console.log("handleDismiss called:", reportId);
-  const password = prompt("Enter admin password to dismiss this report:");
-  if (!password) return;
-  
-  if (buttonEl) setButtonLoading(buttonEl, true);
-  
-  try {
-    const response = await fetch(`${API_BASE}/reports/${reportId}/dismiss`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ adminPassword: password })
-    });
-    
-    if (response.status === 401) {
-      showToast("Invalid admin password.", 'error');
-      if (buttonEl) setButtonLoading(buttonEl, false);
-      return;
-    }
-    
-    if (!response.ok) throw new Error("Failed to dismiss report");
-    
-    showToast("Report dismissed successfully!", 'success');
-    loadReports();
-    loadDashboardStats();
-  } catch (err) {
-    console.error("Failed to dismiss report:", err);
-    showToast("Failed to dismiss report. Please try again.", 'error');
-    if (buttonEl) setButtonLoading(buttonEl, false);
   }
 }
 
@@ -352,8 +391,12 @@ async function sendAlert() {
   if (!message) return alert("Message cannot be empty.");
   if (message.length > 250) return alert("Message too long. Keep it under 250 characters.");
 
+  pendingAction = 'broadcast';
   pendingBroadcastMessage = message;
   pendingReportId = null;
+  document.getElementById("modalTitle").textContent = "Authorize Broadcast";
+  document.getElementById("modalDesc").textContent = "Enter your admin password to send this alert to all residents.";
+  document.getElementById("confirmBroadcastBtn").textContent = "Authorize & Send";
   closeModal("newAlertModal");
   showModal("passwordModal");
 }
@@ -404,7 +447,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("sendAlertBtn")?.addEventListener("click", sendAlert);
   document.getElementById("cancelModalBtn")?.addEventListener("click", () => closeModal("newAlertModal"));
-  
   document.getElementById("confirmBroadcastBtn")?.addEventListener("click", confirmBroadcast);
   document.getElementById("cancelPasswordBtn")?.addEventListener("click", () => closeModal("passwordModal"));
 
